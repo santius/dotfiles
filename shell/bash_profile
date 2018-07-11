@@ -51,10 +51,6 @@ for file in ~/.{bash_prompt}; do
 done;
 unset file;
 
-
-
-
-
 #   Set Paths
 #   ------------------------------------------------------------
   export PATH="$PATH:/usr/local/bin/"
