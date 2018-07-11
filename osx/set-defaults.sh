@@ -8,9 +8,9 @@
 #
 
 # Set computer name
-COMPUTERNAME="Nick Plekhanov's MBP"
-HOSTNAME='mbp'
-LOCALHOSTNAME='mbp'
+COMPUTERNAME="Casiopeia"
+HOSTNAME='CASIOPEIA'
+LOCALHOSTNAME='CASIOPEIA'
 
 # Ask for the administrator password upfront
 sudo -v
@@ -105,16 +105,16 @@ defaults -currentHost write -g com.apple.trackpad.trackpadCornerClickBehavior -i
 defaults -currentHost write com.apple.trackpad.enableSecondaryClick -bool true
 
 # Set a really fast keyboard repeat rate.
-defaults write -g KeyRepeat -int 0
+# defaults write -g KeyRepeat -int 0
 
-# Disable press-and-hold for keys in favor of key repeat.
-defaults write -g ApplePressAndHoldEnabled -bool false
+# Enable press-and-hold for keys
+defaults write -g ApplePressAndHoldEnabled -bool true
 
 # Set language and text formats. (USD and Imperial Units)
-defaults write -g AppleLanguages -array "en" "nl"
+defaults write -g AppleLanguages -array "en" "es"
 defaults write -g AppleLocale -string "en_US@currency=USD"
-defaults write -g AppleMeasurementUnits -string "Inches"
-defaults write -g AppleMetricUnits -bool false
+defaults write -g AppleMeasurementUnits -string "Centimeters"
+defaults write -g AppleMetricUnits -bool true
 
 ###############################################################################
 # Screen
