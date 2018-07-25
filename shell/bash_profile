@@ -61,6 +61,7 @@ unset file;
   export PATH=$ANDROID_HOME:$ANDROID_TOOLS:$PATH
   export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home"
   export PATH=$JAVA_HOME/bin:$PATH
+  export PATH="~/Library/Android/sdk/tools/bin/":$PATH
 
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm

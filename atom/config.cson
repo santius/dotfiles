@@ -4,6 +4,7 @@
     disabledPackages: [
       "react"
     ]
+    telemetryConsent: "no"
     themes: [
       "one-dark-ui"
       "cobalt2-syntax"
