@@ -179,7 +179,7 @@
 
 # Git mergetool
 [merge]
-        tool = opendiff
+	tool = opendiff
 
 [core]
         editor = nano
@@ -255,8 +255,8 @@
 [fetch]
         prune = true
 [user]
-	name = Santi
-	email = santi84@gmail.com
+	name = Santiago Hernandez
+	email = santiago.x.hernandez.-nd@disney.com
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
