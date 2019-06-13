@@ -59,7 +59,7 @@ unset file;
 #   Set Paths
 #   ------------------------------------------------------------
   export PATH="$PATH:/usr/local/bin/"
-  export PATH="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code:/Users/santiagohernandez/.nvm:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+  export PATH="/Users/herns185/Library/Android/sdk/emulator:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code:/Users/santiagohernandez/.nvm:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
   export ANDROID_HOME="/Users/s/Library/Android/sdk/"
   export ANDROID_TOOLS=$ANDROID_HOME/build-tools:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
   export PATH=$ANDROID_HOME:$ANDROID_TOOLS:$PATH
