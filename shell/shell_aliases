@@ -203,4 +203,4 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 
 # Simulators
 alias iossim='open -a Simulator.app'
-alias androidsim='nohup emulator @nexus &'
+alias androidsim='nohup emulator @galaxy &'

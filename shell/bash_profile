@@ -58,21 +58,18 @@ unset file;
 
 #   Set Paths
 #   ------------------------------------------------------------
-  export PATH="$PATH:/usr/local/bin/"
-  export PATH="/Users/herns185/Library/Android/sdk/emulator:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code:/Users/santiagohernandez/.nvm:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-  export ANDROID_HOME="/Users/s/Library/Android/sdk/"
+  export ANDROID_HOME="/Users/herns185/Library/Android/sdk"
   export ANDROID_TOOLS=$ANDROID_HOME/build-tools:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-  export PATH=$ANDROID_HOME:$ANDROID_TOOLS:$PATH
   export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home"
-  export PATH=$JAVA_HOME/bin:$PATH
-  export PATH="~/Library/Android/sdk/tools/bin/":$PATH
+  export PATH="$PATH:$ANDROID_HOME:$ANDROID_TOOLS:$ANDROID_HOME/tools/bin/:$ANDROID_HOME/emulator:$JAVA_HOME/bin:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code:~/.nvm:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/bin/"
+
   export ADB_SERVICE_PORT="4569"
   export DB_SERVICE_PORT=5000
   export SDB_SERVICE_IP=127.0.0.1
   export DB_SERVICE_RETHINK_PORT=28015
   export DB_SERVICE_RETHINK_NAME=stf
   export STORAGE_SERVICE_PORT=7000
-  export STORAGE_SERVICE_REPO_PATH="/Users/s/mb_apps"
+  export STORAGE_SERVICE_REPO_PATH="~/mb_apps"
   export CLUSTER_DNS=localhost
   export SAUCE_USERNAME=TAB_Studio
   export SAUCE_ACCESS_KEY=cbdd3dd5-a9f3-409e-8012-8d134c012775
@@ -133,5 +130,9 @@ trash () { command mv "$@" ~/.Trash ; }     # trash:        Moves a file to the 
 ql () { qlmanage -p "$*" >& /dev/null; }    # ql:           Opens any file in MacOS Quicklook Preview
 alias DT='tee ~/Desktop/terminalOut.txt'    # DT:           Pipe content to file on MacOS Desktop
 
-[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
+# This loads git autocomplete
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
