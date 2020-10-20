@@ -48,7 +48,7 @@ alias vaghalt='vagrant halt'
 
 # Be nice
 alias htop='sudo htop'
-alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
+alias hosts='sudo $EDITOR /etc/hosts'
 
 #
 # Time to upgrade `ls`
@@ -62,7 +62,7 @@ hash gls >/dev/null 2>&1 || alias gls="ls"
 if gls --color > /dev/null 2>&1; then # GNU `ls`
   colorflag="--color"
 else # OS X `ls`
-  colorflag="-G"
+ colorflag="-G"
 fi
 
 export CLICOLOR_FORCE=1
@@ -158,8 +158,8 @@ alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias dig="dig +nocmd any +multiline +noall +answer"
 
 # View HTTP traffic
-alias sniff="sudo ngrep -W byline -d 'en0' -t '^(GET|POST) ' 'tcp and port 80'"
-alias httpdump="sudo tcpdump -i en0 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+alias sniff="sudo ngrep -W byline -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
 
 # Enhanced WHOIS lookups
 alias whois="whois -h whois-servers.net"
@@ -189,10 +189,6 @@ alias hidedotfiles="defaults write com.apple.finder AppleShowAllFiles -bool fals
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
-# Update installed Ruby gems, Homebrew, npm, and their installed packages
-alias brew_update="brew -v update; brew upgrade --force-bottle --cleanup; brew cleanup; brew cask cleanup; brew prune; brew doctor; npm-check -g -u"
-alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-rdoc --no-ri'
-
 # HTTP Requests. One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
   alias "$method"="lwp-request -m '$method'"
@@ -200,6 +196,13 @@ done
 
 # Brew
 alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
+alias brewi='brew install'
+
+# Use nvim insted of vim
+alias vim="nvim"
+
+#Navigation
+alias dev="cd ~/Google\ Drive/Personal/dev/"
 
 # Simulators
 alias iossim='open -a Simulator.app'
