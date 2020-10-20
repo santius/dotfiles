@@ -167,6 +167,11 @@ mv -f ~/.atom ~/dotfiles_old/
 ln -s $HOME/dotfiles/atom ~/.atom
 echo "done"
 
+ # Nvim editor settings
+echo -n "Copying neovim settings.."
+mv -f ~/.vimrc ~/dotfiles_old/
+ln -s $HOME/dotfiles/vim/vimrc ~/.vimrc
+echo "done"
 
 declare -a FILES_TO_SYMLINK=(
 
