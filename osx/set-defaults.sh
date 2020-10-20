@@ -8,9 +8,9 @@
 #
 
 # Set computer name
-COMPUTERNAME="Aurora"
-HOSTNAME='Aurora'
-LOCALHOSTNAME='Aurora'
+COMPUTERNAME=""
+HOSTNAME=''
+LOCALHOSTNAME=''
 
 # Ask for the administrator password upfront
 sudo -v
