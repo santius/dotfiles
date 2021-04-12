@@ -256,11 +256,13 @@
 [fetch]
         prune = true
 [user]
-	name = Santiago Hernandez
-	email = santiago.x.hernandez.-nd@disney.com
+	name = santius
+	email = santi84@gmail.com
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+[init]
+	defaultBranch = master

@@ -10,6 +10,7 @@ dirs_to_prepend=(
   "/usr/local/"
   "/usr/local/mysql/bin"
   "/sw/bin/"
+  "$HOME/.webdrivers/"
   "$HOME/dotfiles/bin"
   "$HOME/bin"
   "$HOME/.rvm/bin"

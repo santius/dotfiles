@@ -58,11 +58,11 @@ unset file;
 
 #   Set Paths
 #   ------------------------------------------------------------
+  export XTEVE="12"
   export ANDROID_HOME="/Users/herns185/Library/Android/sdk"
   export ANDROID_TOOLS=$ANDROID_HOME/build-tools:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
   export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home"
   export PATH="$PATH:$ANDROID_HOME:$ANDROID_TOOLS:$ANDROID_HOME/tools/bin/:$ANDROID_HOME/emulator:$JAVA_HOME/bin:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code:~/.nvm:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/bin/"
-
   export ADB_SERVICE_PORT="4569"
   export DB_SERVICE_PORT=5000
   export SDB_SERVICE_IP=127.0.0.1

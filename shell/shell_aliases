@@ -202,8 +202,15 @@ alias brewi='brew install'
 alias vim="nvim"
 
 #Navigation
-alias dev="cd ~/Google\ Drive/Personal/dev/"
+alias dev="cd ~/Documents/Personal/dev"
 
 # Simulators
 alias iossim='open -a Simulator.app'
 alias androidsim='nohup emulator @galaxy &'
+
+# Python
+
+alias pytest='python3 -m pytest'
+#alias pytest-bdd='python3 -m pytest-bdd'
+alias pip=pip3
+alias python=python3
