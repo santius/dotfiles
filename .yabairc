@@ -1,0 +1,15 @@
+# bsp or float (default: float)
+yabai -m config layout bsp
+
+yabai -m config focus_follows_mouse autoraise
+yabai -m config mouse_follows_focus onn
+
+# modify window shadows (default: on, options: on, off, float)
+# example: show shadows only for floating windows
+yabai -m config window_shadow float
+
+yabai -m signal --add event=window_created action='ymsp window-created'
+yabai -m signal --add event=application_launched action='ymsp window-created'
+yabai -m signal --add event=window_moved action='ymsp window-moved'
+
+ymsp on-yabai-start

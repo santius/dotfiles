@@ -1,0 +1,148 @@
+# Modes
+:: default : sketchybar -m --set modal icon="N" icon.color="0xFF$(awk -F '0x21#0x1E' '/color4/{print $2}' ~/.Xresources)" background.color="0xFF$(awk -F '0x21#0x1E' '/background/{print $2}' ~/.Xresources)"
+:: window @ : sketchybar -m --set modal icon="W" icon.color="0xFF$(awk -F '0x21#0x1E' '/background/{print $2}' ~/.Xresources)" background.color="0xFF$(awk -F '0x21#0x1E' '/color4/{print $2}' ~/.Xresources)"
+:: scripts @ : sketchybar -m --set modal icon="S" icon.color="0xFF$(awk -F '0x21#0x1E' '/color0/{print $2}' ~/.Xresources)" background.color="0xFF$(awk -F '0x21#0x1E' '/color2/{print $2}' ~/.Xresources)"
+
+# Mode Shortcuts
+default, scripts < ctrl - escape ; window
+window, scripts < escape ; default
+default, window < ctrl - escape ; scripts
+
+# Navigate Windows
+default < ctrl - k : yabai -m window --focus north
+default < ctrl - j : yabai -m window --focus south
+default < ctrl - l : yabai -m window --focus east
+default < ctrl - h : yabai -m window --focus west
+
+# Swap windows
+default < shift + ctrl - k : yabai -m window --swap north 
+default < shift + ctrl - j : yabai -m window --swap south
+default < shift + ctrl - l : yabai -m window --swap east
+default < shift + ctrl - h : yabai -m window --swap west 
+
+# Move and split
+default < ctrl + alt - k : yabai -m window --warp north 
+default < ctrl + alt - j : yabai -m window --warp south
+default < ctrl + alt - l : yabai -m window --warp east
+default < ctrl + alt - h : yabai -m window --warp west 
+
+# Rotate Windows 
+default < ctrl - r : yabai -m space --rotate 270
+
+# Flip x and y axis
+default < ctrl - y : yabai -m space --mirror y-axis
+default < ctrl - x : yabai -m space --mirror x-axis
+
+# Balance Windows
+default < ctrl - b : yabai -m space --balance 
+
+# Toggle Float 
+default < ctrl - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# Zoom window
+default < ctrl - z : yabai -m window --toggle zoom-fullscreen
+
+# Navigate stacks and windows : 0x21 => [ 0x1E => ]
+default < ctrl - 0x21 : yabai -m window --focus stack.prev || yabai -m window --focus prev
+default < ctrl - 0x1E : yabai -m window --focus stack.next || yabai -m window --focus next
+
+# Navigate Spaces : 0x21 => [ 0x1E => ]
+default < ctrl + shift - 0x21 : yabai -m space --focus prev
+default < ctrl + shift - 0x1E : yabai -m space --focus next
+
+# Follow window to prev/next space  : 0x21 => [ 0x1E => ]
+default < ctrl + alt - 0x21 : yabai -m window --space prev; yabai -m space --focus prev
+default < ctrl + alt - 0x1E : yabai -m window --space next; yabai -m space --focus next
+
+# Spaces 1 - 9
+default < ctrl - 1 : yabai -m space --focus 1 
+default < ctrl - 2 : yabai -m space --focus 2 
+default < ctrl - 3 : yabai -m space --focus 3 
+default < ctrl - 4 : yabai -m space --focus 4 
+default < ctrl - 5 : yabai -m space --focus 5 
+default < ctrl - 6 : yabai -m space --focus 6 
+default < ctrl - 7 : yabai -m space --focus 7 
+default < ctrl - 8 : yabai -m space --focus 8 
+default < ctrl - 9 : yabai -m space --focus 9
+
+# Move Window space 1 - 9
+default < ctrl - 1 : yabai -m window --space 1 
+default < ctrl - 2 : yabai -m window --space 2 
+default < ctrl - 3 : yabai -m window --space 3 
+default < ctrl - 4 : yabai -m window --space 4 
+default < ctrl - 5 : yabai -m window --space 5 
+default < ctrl - 6 : yabai -m window --space 6 
+default < ctrl - 7 : yabai -m window --space 7 
+default < ctrl - 8 : yabai -m window --space 8 
+default < ctrl - 9 : yabai -m window --space 9
+
+# Naviate Displays : 0x21 => [ 0x1E => ]
+default < alt - 0x21 : yabai -m display --focus east
+default < alt - 0x1E : yabai -m display --focus west
+# Follow window to prev/next display : 0x21 => [ 0x1E => ]
+default < alt + shift - 0x21 : yabai -m window --display west; yabai -m window --focus west
+default < alt + shift - 0x1E : yabai -m window --display east; yabai -m window --focus east
+
+# Swap focused window with largest window
+default < ctrl - space : yabai -m window --swap largest
+
+# Change Split
+default < ctrl - s : yabai -m window --toggle split
+
+# Change Wallpaper
+default < ctrl - w : wallpaper set "$HOME/.config/wallpapers/$(\ls ~/.config/wallpapers | shuf -n 1)"
+
+# Kuake
+default < cmd - 0x32 : . $HOME/.config/bin/helper && kuake
+
+# Open Authy
+default < ctrl + alt - a  : open -a Authy\ Desktop; skhd -k 'escape'
+# Open Bitwarden
+default < ctrl + alt - b : open -a Bitwarden; skhd -k 'escape'
+
+# Restart yabai
+scripts < y : brew services restart yabai; skhd -k 'escape'
+# Restart skhd
+scripts < s  : brew services restart skhd
+
+# Stack focused window on selected window 
+# TODO: Change this to keybaord driven selection
+# default < ctrl - return :                                           \
+#     window_id=$(yabai -m query --windows --window | jq -re '.id'); \
+#     sleep 1;                                                       \
+#     yabai -m window mouse --stack $window_id  
+
+# Next window that moves in to the tree will be stacked 
+default < ctrl - return : yabai -m window mouse --insert stack
+ # Unstack Window, if a window is set to insert stack it will be stacked 
+default < ctrl - backspace : yabai -m window --toggle float --toggle float
+
+
+# Resize Windows
+default < ctrl + shift - left : yabai -m window --resize left:-150:0 || yabai -m window --resize right:-150:0 || yabai -m window --resize left:150:0 || yabai -m window --resize right:150:0
+default < ctrl + shift - right : yabai -m window --resize left:150:0 || yabai -m window --resize right:150:0 || yabai -m window --resize left:-150:0 || yabai -m window --resize right:-150:0
+default < ctrl + shift - up : yabai -m window --resize top:0:-150 || yabai -m window --resize bottom:0:-150 || yabai -m window --resize top:0:150 || yabai -m window --resize bottom:0:150
+default < ctrl + shift - down : yabai -m window --resize top:0:150 || yabai -m window --resize bottom:0:150 || yabai -m window --resize top:0:-150 || yabai -m window --resize bottom:0:-150
+
+
+# Toggle Layout
+default < ctrl + alt - space : . $HOME/.config/bin/helper && toggle_layout
+
+# Open Terminal
+default < cmd - return [
+    * : /Applications/Kitty.app/Contents/MacOS/kitty -1 -T DEFAULT -d ~
+    "mail" ~
+    "spark" ~
+    "messages" ~
+    "microsoft teams" ~
+] 
+
+default < meh - s [
+# Remove Duplicates and Sort tabs in firefox
+"firefox" : skhd -k 'ctrl + shift - x'; skhd -k 'ctrl + shift - a'
+]
+
+default < meh - m [
+# Merge windows in firefox
+"firefox" : skhd -k 'ctrl + shift - m'
+]
