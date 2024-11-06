@@ -21,3 +21,4 @@ brew "neofetch"
 brew "tldr"
 brew "dust"
 brew "bat"
+tete
