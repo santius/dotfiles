@@ -2,10 +2,10 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
 
-zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 
-ZSH_CUSTOM=~/zsh_custom
+export ZSH_CUSTOM=~/zsh_custom
 
 plugins=(git aliases colored-man-pages colorize command-not-found compleat cp genpass history rsync safe-paste vundle web-search autojump pj docker pip python pyenv virtualenv forklift macos battery rand-quote)
 

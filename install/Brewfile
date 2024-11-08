@@ -1,0 +1,42 @@
+tap "homebrew/bundle"
+tap "homebrew/command-not-found"
+
+# core/dotfiles
+brew "nano"
+brew "thefuck"
+brew "ack"
+brew "autojump"
+brew "coreutils"
+brew "findutils"
+brew "gh"
+brew "htop"
+brew "hugo"
+brew "moreutils"
+brew "rename"
+brew "vim"
+brew "ranger"
+brew "btop"
+brew "neofetch"
+brew "tldr"
+brew "dust"
+
+# media
+brew "ffmpeg"
+brew "imagemagick"
+brew "uni"
+brew "webp"
+
+# languages/tools
+brew "python"
+brew "shellcheck"
+brew "openjdk"
+
+# fs/network
+brew "bat"
+brew "croc"
+brew "httpie"
+brew "ssh-copy-id"
+brew "tree"
+brew "unar"
+brew "wget"
+brew "zoxide"
