@@ -7,7 +7,6 @@ This repository contains my personal configuration files (dotfiles) for setting 
 - [Overview](#overview)
 - [Dotfiles Included](#dotfiles-included)
   - [Oh My Zsh](#oh-my-zsh)
-  - [Kitty](#kitty)
   - [Zsh Custom](#zsh-custom)
   - [Vim](#vim)
   - [macOS Defaults](#macos-defaults)

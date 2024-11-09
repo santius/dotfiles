@@ -1,7 +1,9 @@
 #!/bin/bash
 
-BASE_DIR="$HOME/dev/dotfiles"
+# Exit on error
+set -e
 
+BASE_DIR="$HOME/dev/dotfiles"
 BACKUP_DIR="$HOME/.dotfiles_backup"
 ZSH_CUSTOM_DIR="$HOME/zsh_custom"
 GIT_IGNORE_FILE="$BASE_DIR/git/gitignore"
@@ -16,65 +18,64 @@ FILES_TO_INSTALL=(
     ".zshrc"
     ".vimrc"
     ".gitconfig"
+    "zsh_custom/aliases.zsh"
+    "zsh_custom/exports.zsh"
 )
 
-FILES_TO_INSTALL_ZSH=(
-    "aliases.zsh"
-)
+# Create directories if they don't exist
+mkdir -p "$BACKUP_DIR" "$ZSH_CUSTOM_DIR"
 
-if [ ! -d "$BACKUP_DIR" ]; then
-    echo "Creating backup directory at $BACKUP_DIR"
-    mkdir "$BACKUP_DIR"
-else
-    echo "Backup directory already exists at $BACKUP_DIR"
-fi
-
-if [ ! -d "$ZSH_CUSTOM_DIR" ]; then
-    echo "Creating ZSH custom directory at $ZSH_CUSTOM_DIR"
-    mkdir "$ZSH_CUSTOM_DIR"
-else
-    echo "ZSH custom directory already exists at $ZSH_CUSTOM_DIR"
-fi
-
+# Backup existing files
 for file in "${FILES_TO_BACKUP[@]}"; do
     if [ -e "$file" ]; then
-        echo "Moving $file to $BACKUP_DIR"
+        echo "Backing up $file to $BACKUP_DIR"
         mv "$file" "$BACKUP_DIR"
     else
-        echo "Warning: $file does not exist, skipping."
+        echo "Warning: $file does not exist, skipping backup."
     fi
 done
 
+# Install dotfiles by creating symlinks
 for file in "${FILES_TO_INSTALL[@]}"; do
-    if [ -e "$file" ]; then
-        rm "$HOME"/"$file" 
+    target="$HOME/$file"
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+        echo "Removing existing $target"
+        rm -rf "$target"
+    fi
+
+    if [ ! -L "$target" ]; then
         echo "Creating symlink for $file in $HOME"
-        ln -s "$BASE_DIR"/"$file" "$HOME"
-    else
-        echo "Warning: $file does not exist, skipping."
+        ln -s "$BASE_DIR/$file" "$target"
     fi
 done
 
-
-for file in "zsh_custom"/"${FILES_TO_INSTALL_ZSH[@]}"; do
-    if [ -e "$file" ]; then
-        rm "$HOME"/"$file" 
-        echo "Creating symlink for $file in $ZSH_CUSTOM_DIR"
-        ln -s "$BASE_DIR"/zsh_custom/"$file" "$ZSH_CUSTOM_DIR"
+# Move custom Zsh configuration files to the appropriate directory
+for custom_file in "aliases.zsh" "exports.zsh"; do
+    if [ -e "$HOME/$custom_file" ]; then
+        mv "$HOME/$custom_file" "$ZSH_CUSTOM_DIR/$custom_file"
+        echo "Moved $custom_file to $ZSH_CUSTOM_DIR"
     else
-        echo "Warning: $file does not exist, skipping."
+        echo "Warning: $HOME/$custom_file does not exist, skipping move."
     fi
 done
 
-rm "$HOME"/.config/git/gitignore
+# Set up gitignore file
+if [ -e "$HOME/.config/git/gitignore" ]; then
+    rm "$HOME/.config/git/gitignore"
+    echo "Removed existing gitignore."
+fi
 ln -s "$GIT_IGNORE_FILE" "$HOME/.config/git/gitignore"
+echo "Created symlink for gitignore."
 
+# Install Homebrew if it's not installed
 if ! command -v brew &> /dev/null; then
+    echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 else
     echo "Homebrew is already installed."
 fi
 
-source "$BASE_DIR"/set-defaults.sh
+# Set default preferences
+source "$BASE_DIR/set-defaults.sh"
 
-echo "Backup completed."
+echo "Backup and installation completed successfully."
