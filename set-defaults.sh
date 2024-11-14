@@ -1,4 +1,4 @@
-COMPUTER_NAME="US-IT02338"
+COMPUTER_NAME=$1
 LANGUAGES=(en-US)
 LOCALE="enUS"
 MEASUREMENT_UNITS="Centimeters"
@@ -320,4 +320,3 @@ defaults write com.apple.Safari.plist ShowFavoritesBar -bool false
 for app in "Address Book" "Calendar" "Contacts" "Dock" "Finder" "Mail" "Safari" "SystemUIServer" "iCal"; do
   killall "${app}" &> /dev/null
 done
-
