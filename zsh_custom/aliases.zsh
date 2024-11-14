@@ -82,3 +82,10 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash/*; sud
 alias displays="system_profiler SPDisplaysDataType"
 alias cpu="sysctl -n machdep.cpu.brand_string"
 alias ram="top -l 1 -s 0 | grep PhysMem"
+
+# all in one homebrew, gem update commands
+alias brewup='brew update && brew upgrade && brew cleanup'
+alias gemup='gem update --system && gem update && gem cleanup'
+alias npmup='npm -g cache clean && npm -g update && npm-check-updates -u && npm install'
+alias sysup='sudo softwareupdate -i -a'
+alias upall='sysup && brewup && gemup && npmup'
