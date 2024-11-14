@@ -37,7 +37,7 @@ function config_dotfiles(){
       continue
     fi
     if [ -f "$file" ]; then
-      log_info "File is $file"
+      log_info "Created $file in $HOME"
       ln -s $file $HOME
     fi
   done
