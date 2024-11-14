@@ -19,6 +19,9 @@ brew "btop"
 brew "neofetch"
 brew "tldr"
 brew "dust"
+brew "gnu-sed"
+brew "bash-completion"
+brew "shellcheck"
 
 # media
 brew "ffmpeg"
