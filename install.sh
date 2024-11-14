@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Exit on error
-set -e
+# set -e
 
 BASE_DIR="$HOME/dev/dotfiles"
+DOTS_DIR="$HOME/dev/dotfiles/dots"
 BACKUP_DIR="$HOME/.dotfiles_backup"
 ZSH_CUSTOM_DIR="$HOME/zsh_custom"
 GIT_IGNORE_FILE="$BASE_DIR/git/gitignore"
@@ -12,14 +13,7 @@ FILES_TO_BACKUP=(
     "$HOME/.zshrc"
     "$HOME/.vimrc"
     "$HOME/.gitconfig"
-)
-
-FILES_TO_INSTALL=(
-    ".zshrc"
-    ".vimrc"
-    ".gitconfig"
-    "zsh_custom/aliases.zsh"
-    "zsh_custom/exports.zsh"
+    "$GIT_IGNORE_FILE"
 )
 
 # Create directories if they don't exist
@@ -29,34 +23,17 @@ mkdir -p "$BACKUP_DIR" "$ZSH_CUSTOM_DIR"
 for file in "${FILES_TO_BACKUP[@]}"; do
     if [ -e "$file" ]; then
         echo "Backing up $file to $BACKUP_DIR"
-        mv "$file" "$BACKUP_DIR"
-    else
-        echo "Warning: $file does not exist, skipping backup."
+        mv -n "$file" "$BACKUP_DIR"
     fi
 done
 
-# Install dotfiles by creating symlinks
-for file in "${FILES_TO_INSTALL[@]}"; do
-    target="$HOME/$file"
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-        echo "Removing existing $target"
-        rm -rf "$target"
-    fi
-
-    if [ ! -L "$target" ]; then
-        echo "Creating symlink for $file in $HOME"
-        ln -s "$BASE_DIR/$file" "$target"
-    fi
-done
-
-# Move custom Zsh configuration files to the appropriate directory
-for custom_file in "aliases.zsh" "exports.zsh"; do
-    if [ -e "$HOME/$custom_file" ]; then
-        mv "$HOME/$custom_file" "$ZSH_CUSTOM_DIR/$custom_file"
-        echo "Moved $custom_file to $ZSH_CUSTOM_DIR"
-    else
-        echo "Warning: $HOME/$custom_file does not exist, skipping move."
-    fi
+for file in "$DOTS_DIR"/* "$DOTS_DIR"/.*; do
+  if [ "$file" == "$DOTS_DIR/." ] || [ "$file" == "$DOTS_DIR/.." ] || [ "$file" == "$DOTS_DIR/dots" ]; then
+    continue
+  fi
+  if [ -f "$file" ]; then
+    ln -s $file $HOME
+  fi
 done
 
 # Set up gitignore file
@@ -76,6 +53,4 @@ else
 fi
 
 # Set default preferences
-source "$BASE_DIR/set-defaults.sh"
-
-echo "Backup and installation completed successfully."
+# source "$BASE_DIR/set-defaults.sh"

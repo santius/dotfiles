@@ -1,9 +1,12 @@
 export EDITOR="mvim"
-
+export CLICOLOR=1
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+
+export HISTCONTROL=erasedups:ignorespace
+export HISTSIZE=10000
 
 # highlighting inside manpages and elsewhere
 export LESS_TERMCAP_mb=$(printf '\e[01;31m')													# enter blinking mode – red

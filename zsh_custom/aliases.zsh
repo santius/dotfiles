@@ -1,4 +1,5 @@
 # CD
+alias cd="z"
 alias ..="cd .."
 alias cd..="cd .."
 alias ...="cd ../.."
