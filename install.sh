@@ -25,13 +25,13 @@ read -p "Do you want to install Dotfiles? (yes/no): " install_dotfiles
 read -p "Do you want to install Homebrew? (yes/no): " install_homebrew
 read -p "Do you want to config MacOS defaults? (yes/no): " install_macos_defaults
 
-if [[ "$install_homebrew" == "yes" ]]; then
-    config_homebrew
-fi
-
 if [[ "$install_dotfiles" == "yes" ]]; then
     config_dotfiles
     config_vim
+fi
+
+if [[ "$install_homebrew" == "yes" ]]; then
+    config_homebrew
 fi
 
 if [[ "$install_macos_defaults" == "yes" ]]; then

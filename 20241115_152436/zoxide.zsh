@@ -1,0 +1,1 @@
+/Users/santius/dev/dotfiles/zsh_custom/zoxide.zsh

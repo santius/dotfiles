@@ -5,7 +5,7 @@ function config_homebrew(){
   else
       log_info "Homebrew is already installed."
   fi
-  echo "Base dir is $BASE_DIR/Brewfile"
-  ln -s $HOME/Brewfile $BASE_DIR/Brewfile
+  echo "Base dir is $BASE_DIR"
+  ln -sf $BASE_DIR/install/Brewfile $HOME/Brewfile
   brew bundle --file=$HOME/Brewfile
 }
