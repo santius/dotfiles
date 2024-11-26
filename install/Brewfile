@@ -33,6 +33,8 @@ brew "webp"
 brew "python"
 brew "shellcheck"
 brew "openjdk"
+brew "pyvim"
+brew "luarocks"
 
 # fs/network
 brew "bat"
