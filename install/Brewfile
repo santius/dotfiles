@@ -1,6 +1,3 @@
-tap "homebrew/bundle"
-tap "homebrew/command-not-found"
-
 # core/dotfiles
 brew "nano"
 brew "thefuck"
@@ -45,15 +42,3 @@ brew "tree"
 brew "unar"
 brew "wget"
 brew "zoxide"
-
-# Cask packages
-tap homebrew/cask
-
-cask "docker"
-cask "firefox"
-cask "font-fira-code"
-cask "font-hack"
-cask "slack"
-cask "spotify"
-cask "visual-studio-code"
-cask "vlc"
