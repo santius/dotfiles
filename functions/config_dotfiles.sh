@@ -1,7 +1,7 @@
 function config_dotfiles(){
   timestamp=$(date +"%Y%m%d_%H%M%S")
   mv $BACKUP_DIR ~/dotfiles_backup_$timestamp
-  mv $ZSH_CUSTOM_DIR "$ZSH_CUSTOM_DIR_$timestamp"
+  mv $ZSH_CUSTOM_DIR "$ZSH_CUSTOM_DIR $timestamp"
   mkdir -p "$BACKUP_DIR" "$ZSH_CUSTOM_DIR"
 
   for file in "${FILES_TO_BACKUP[@]}"; do
@@ -37,7 +37,7 @@ function config_dotfiles(){
   log_info "Created symlink for gitignore."
 }
 
-function config_vim(){
+function config_nvim(){
     mkdir -p ~/.vim/colors ~/.vim/autoload ~/.vim/bundle && \
     curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
     ln -sf  $VIM_DIR/colors/solarized.vim ~/.vim/bundle/solarized.vim

@@ -46,7 +46,7 @@ alias test="ls"
 alias puto="ls"
 
 # TYPOS
-alias where=which 
+alias where=which
 alias brwe=brew
 
 # IP addresses
@@ -89,3 +89,43 @@ alias gemup='gem update --system && gem update && gem cleanup'
 alias npmup='npm -g cache clean && npm -g update && npm-check-updates -u && npm install'
 alias sysup='sudo softwareupdate -i -a'
 alias upall='sysup && brewup && gemup && npmup'
+
+# Directory navigation improvements
+alias cd..='cd ..'
+alias -- -='cd -'
+alias cdd='cd ~/Downloads'
+alias cddoc='cd ~/Documents'
+alias cddes='cd ~/Desktop'
+
+# Git improvements - add these
+alias gs='git status'
+alias gd='git diff'
+alias gl='git log --oneline'
+alias gco='git checkout'
+alias gb='git branch'
+alias gst='git stash'
+alias grb='git rebase'
+alias gcp='git cherry-pick'
+
+# Docker aliases - consider adding
+alias d='docker'
+alias dc='docker-compose'
+alias dps='docker ps'
+alias dimg='docker images'
+
+# Kubernetes aliases - if you use k8s
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get services'
+alias kgn='kubectl get nodes'
+
+# Improved system commands
+alias mkdir='mkdir -p'    # Create parent directories if needed
+alias ping='ping -c 5'    # Ping with 5 packets by default
+alias path='echo -e ${PATH//:/\\n}'  # Pretty print PATH
+alias ports='ss -tulanp'  # Modern alternative to netstat
+
+# Development
+alias py='python3'
+alias pip='pip3'
+alias npml='npm list -g --depth=0'  # List global npm packages
