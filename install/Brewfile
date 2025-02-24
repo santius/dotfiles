@@ -1,44 +1,157 @@
-# core/dotfiles
-brew "nano"
-brew "thefuck"
-brew "ack"
-brew "autojump"
-brew "coreutils"
-brew "findutils"
-brew "gh"
-brew "htop"
-brew "hugo"
-brew "moreutils"
-brew "rename"
-brew "vim"
-brew "ranger"
-brew "btop"
-brew "neofetch"
-brew "tldr"
-brew "dust"
-brew "gnu-sed"
+# ====================
+# Core System Tools
+# ====================
+# Shell and Terminal
+brew "zsh"
+brew "bash"
 brew "bash-completion"
+brew "tmux"
 brew "shellcheck"
+brew "thefuck"
 
-# media
-brew "ffmpeg"
-brew "imagemagick"
-brew "uni"
-brew "webp"
+# Text Editors
+brew "vim"
+brew "neovim"
+brew "nano"
 
-# languages/tools
-brew "python"
-brew "shellcheck"
-brew "openjdk"
-brew "pyvim"
-brew "luarocks"
+# System Monitoring
+brew "htop"
+brew "btop"
+brew "glances"
+brew "neofetch"
+brew "duf"          # Better df
+brew "dust"         # Better du
+brew "procs"        # Better ps
 
-# fs/network
-brew "bat"
-brew "croc"
-brew "httpie"
-brew "ssh-copy-id"
+# File Management
+brew "fd"           # Better find
+brew "ripgrep"      # Better grep
+brew "ack"
 brew "tree"
-brew "unar"
+brew "ranger"
+brew "bat"          # Better cat
+brew "exa"          # Better ls
+brew "zoxide"       # Better cd
+brew "fzf"          # Fuzzy finder
+brew "autojump"
+brew "rename"
+brew "moreutils"    # Collection of tools
+brew "coreutils"    # GNU core utilities
+brew "findutils"    # GNU find utilities
+brew "gnu-sed"      # GNU sed
+
+# ====================
+# Development Tools
+# ====================
+# Version Control
+brew "git"
+brew "gh"           # GitHub CLI
+brew "git-lfs"
+brew "git-flow"
+
+# Programming Languages
+brew "python"
+brew "node"
+brew "go"
+brew "rust"
+brew "lua"
+brew "luarocks"
+brew "ruby"
+brew "openjdk"
+
+# Development Tools
+brew "jq"           # JSON processor
+brew "yq"           # YAML processor
+brew "httpie"       # Better curl
+brew "pyvim"
+brew "ctags"
+brew "cmake"
+brew "make"
+
+# ====================
+# Network Tools
+# ====================
 brew "wget"
-brew "zoxide"
+brew "curl"
+brew "croc"         # File transfer
+brew "ssh-copy-id"
+brew "nmap"
+brew "mtr"          # Better traceroute
+brew "netcat"
+brew "speedtest-cli"
+
+# ====================
+# Media Tools
+# ====================
+# Image Processing
+brew "imagemagick"
+brew "webp"
+brew "jpegoptim"
+brew "optipng"
+brew "gifsicle"
+
+# Audio/Video
+brew "ffmpeg"
+brew "youtube-dl"
+brew "mp3gain"
+
+# Text/Font
+brew "uni"          # Unicode database
+brew "figlet"       # ASCII art
+brew "fontforge"
+
+# ====================
+# Cloud & Container
+# ====================
+brew "awscli"
+brew "azure-cli"
+brew "docker"
+brew "docker-compose"
+brew "kubernetes-cli"
+brew "terraform"
+
+# ====================
+# Security Tools
+# ====================
+brew "gnupg"
+brew "openssl"
+brew "ssh-audit"
+brew "lynis"        # Security auditing
+brew "age"          # File encryption
+
+# ====================
+# Documentation
+# ====================
+brew "tldr"         # Simplified man pages
+brew "cheat"        # Interactive cheatsheets
+brew "pandoc"       # Document converter
+brew "asciidoc"
+
+# ====================
+# Productivity
+# ====================
+brew "task"         # Task management
+brew "timewarrior"  # Time tracking
+brew "calcurse"     # Calendar
+
+# ====================
+# Casks (GUI Apps)
+# ====================
+cask "visual-studio-code"
+cask "iterm2"
+cask "rectangle"    # Window management
+cask "alfred"
+cask "docker"
+cask "google-chrome"
+cask "firefox"
+cask "slack"
+cask "zoom"
+cask "1password"
+cask "dropbox"
+
+# ====================
+# Mac App Store Apps
+# ====================
+mas "Xcode", id: 497799835
+mas "Magnet", id: 441258766
+mas "The Unarchiver", id: 425424353

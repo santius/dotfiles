@@ -1,92 +1,110 @@
-execute pathogen#infect()
+" ====================
+" Basic Settings
+" ====================
+set nocompatible              " Use Vim settings, rather than Vi settings
+syntax enable                 " Enable syntax highlighting
+filetype plugin indent on     " Enable file type detection
 
+" Color scheme
 colorscheme solarized
 let g:solarized_termtrans=1
-
-" Use the Solarized Dark theme
 set background=dark
+set termguicolors            " Enable true color support
 
-" Make Vim more useful
-set nocompatible
-" Use the OS clipboard by default (on versions compiled with `+clipboard`)
-set clipboard=unnamed
-" Enhance command-line completion
-set wildmenu
-" Allow cursor keys in insert mode
-set esckeys
-" Allow backspace in insert mode
-set backspace=indent,eol,start
-" Optimize for fast terminal connections
-set ttyfast
-" Add the g flag to search/replace by default
-set gdefault
-" Use UTF-8 without BOM
-set encoding=utf-8 nobomb
-" Change mapleader
-let mapleader=","
-" Don’t add empty newlines at the end of files
-set binary
-set noeol
-" Centralize backups, swapfiles and undo history
-set backupdir=~/.vim/backups
-set directory=~/.vim/swaps
-if exists("&undodir")
-	set undodir=~/.vim/undo
-endif
+" UI Configuration
+set number relativenumber     " Show relative line numbers
+set ruler                    " Show cursor position
+set wildmenu                 " Enhanced command-line completion
+set showcmd                  " Show partial commands
+set laststatus=2            " Always show status line
+set noshowmode              " Don't show mode (shown in status line)
+set signcolumn=yes          " Always show sign column
+set cursorline              " Highlight current line
+set scrolloff=8             " Keep 8 lines above/below cursor
+set sidescrolloff=8         " Keep 8 columns left/right of cursor
+set nowrap                  " Don't wrap lines
+set list                    " Show invisible characters
+set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
+set showmatch               " Show matching brackets
 
-" Don’t create backups when editing files in certain directories
-set backupskip=/tmp/*,/private/tmp/*
+" Search Settings
+set hlsearch                " Highlight search results
+set incsearch               " Show search matches as you type
+set ignorecase             " Ignore case when searching
+set smartcase              " Case-sensitive if search contains uppercase
+set gdefault               " Add the g flag to search/replace by default
 
-" Respect modeline in files
-set modeline
-set modelines=4
-" Enable per-directory .vimrc files and disable unsafe commands in them
-set exrc
-set secure
-" Enable line numbers
-set number
-" Enable syntax highlighting
-syntax on
-" Highlight current line
-set cursorline
-" Make tabs as wide as two spaces
-set tabstop=2
-" Show “invisible” characters
-set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
-set list
-" Highlight searches
-set hlsearch
-" Ignore case of searches
-set ignorecase
-" Highlight dynamically as pattern is typed
-set incsearch
-" Always show status line
-set laststatus=2
-" Enable mouse in all modes
-set mouse=a
-" Disable error bells
-set noerrorbells
-" Don’t reset cursor to start of line when moving around.
-set nostartofline
-" Show the cursor position
-set ruler
-" Don’t show the intro message when starting Vim
-set shortmess=atI
-" Show the current mode
-set showmode
-" Show the filename in the window titlebar
-set title
-" Show the (partial) command as it’s being typed
-set showcmd
-" Use relative line numbers
-if exists("&relativenumber")
-	set relativenumber
-	au BufReadPost * set relativenumber
-endif
-" Start scrolling three lines before the horizontal window border
-set scrolloff=3
+" Indentation
+set expandtab              " Use spaces instead of tabs
+set tabstop=2             " Number of spaces for tab
+set softtabstop=2         " Number of spaces for tab while editing
+set shiftwidth=2          " Number of spaces for autoindent
+set autoindent            " Copy indent from current line
+set smartindent           " Smart autoindenting
+set shiftround            " Round indent to multiple of shiftwidth
 
-" Strip trailing whitespace (,ss)
+" File Handling
+set encoding=utf-8        " Use UTF-8 encoding
+set fileencoding=utf-8    " Use UTF-8 encoding for written files
+set hidden                " Allow hidden buffers
+set autoread              " Reload files changed outside vim
+set nobackup             " Don't create backup files
+set nowritebackup        " Don't create backup files during write
+set noswapfile           " Don't create swap files
+set undofile             " Persistent undo
+set undodir=~/.vim/undo  " Set undo directory
+
+" Performance
+set updatetime=300       " Faster completion
+set timeoutlen=500      " Faster key sequence completion
+set lazyredraw          " Don't redraw while executing macros
+set ttyfast             " Faster terminal connection
+
+" System Integration
+set clipboard=unnamed    " Use system clipboard
+set mouse=a             " Enable mouse in all modes
+set backspace=indent,eol,start  " Make backspace work as expected
+set noerrorbells        " Disable error bells
+set visualbell t_vb=    " Disable visual bell
+
+" ====================
+" Key Mappings
+" ====================
+let mapleader=","       " Set leader key
+
+" Quick save
+nnoremap <leader>w :w<CR>
+
+" Clear search highlighting
+nnoremap <leader><space> :noh<CR>
+
+" Buffer navigation
+nnoremap <leader>l :bnext<CR>
+nnoremap <leader>h :bprevious<CR>
+nnoremap <leader>q :bp <BAR> bd #<CR>
+
+" Split navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Move lines up/down
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" Strip trailing whitespace
+nnoremap <leader>ss :call StripWhitespace()<CR>
+
+" Save with sudo
+command! W w !sudo tee % > /dev/null
+
+" ====================
+" Functions
+" ====================
+" Strip trailing whitespace
 function! StripWhitespace()
 	let save_cursor = getpos(".")
 	let old_query = getreg('/')
@@ -94,16 +112,50 @@ function! StripWhitespace()
 	call setpos('.', save_cursor)
 	call setreg('/', old_query)
 endfunction
-noremap <leader>ss :call StripWhitespace()<CR>
-" Save a file as root (,W)
-noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
-" Automatic commands
+" ====================
+" Auto Commands
+" ====================
 if has("autocmd")
 	" Enable file type detection
 	filetype on
-	" Treat .json files as .js
+
+	" Treat .json files as JavaScript
 	autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
+
 	" Treat .md files as Markdown
 	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
+
+	" Return to last edit position when opening files
+	autocmd BufReadPost *
+		\ if line("'\"") > 0 && line("'\"") <= line("$") |
+		\   exe "normal! g`\"" |
+		\ endif
+
+	" Automatically remove trailing whitespace on save
+	autocmd BufWritePre * :%s/\s\+$//e
+
+	" Set relative numbers in normal mode, absolute in insert mode
+	autocmd InsertEnter * :set norelativenumber
+	autocmd InsertLeave * :set relativenumber
 endif
+
+" ====================
+" Plugin Settings
+" ====================
+" Enable Pathogen
+execute pathogen#infect()
+
+" NERDTree settings (if installed)
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.DS_Store$', '\.git$', '\.svn$']
+
+" CtrlP settings (if installed)
+let g:ctrlp_show_hidden=1
+let g:ctrlp_custom_ignore={
+	\ 'dir':  '\.git$\|\.hg$\|\.svn$\|bower_components$\|dist$\|node_modules$\|project_files$\|test$',
+	\ 'file': '\.exe$\|\.so$\|\.dll$\|\.pyc$'
+	\ }
+
+" Status line configuration
+set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)

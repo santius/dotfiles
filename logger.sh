@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Set strict mode
-set -euo pipefail
+# Disable strict mode temporarily for variable declarations
+set +u 2>/dev/null || true
 
 # ANSI color codes
 readonly RED='\033[0;31m'
@@ -14,9 +14,18 @@ readonly GRAY='\033[0;90m'
 readonly NC='\033[0m' # No Color
 readonly BOLD='\033[1m'
 
-# Log levels
-declare -rA LOG_LEVELS=([DEBUG]=0 [INFO]=1 [WARN]=2 [ERROR]=3 [FATAL]=4)
-LOG_LEVEL="${LOG_LEVEL:-INFO}" # Default to INFO if not set
+# Initialize LOG_LEVEL first
+: "${LOG_LEVEL:=INFO}"
+
+# Log levels with default value (using simple variables instead of associative array)
+readonly LOG_LEVEL_DEBUG=0
+readonly LOG_LEVEL_INFO=1
+readonly LOG_LEVEL_WARN=2
+readonly LOG_LEVEL_ERROR=3
+readonly LOG_LEVEL_FATAL=4
+
+# Now that all variables are declared, enable strict mode
+set -euo pipefail
 
 # Logging utility functions
 timestamp() {
@@ -24,13 +33,25 @@ timestamp() {
 }
 
 log_level_numeric() {
-    echo "${LOG_LEVELS[$1]:-${LOG_LEVELS[INFO]}}"
+    local level="${1:-INFO}"
+    case "$level" in
+        "DEBUG") echo "$LOG_LEVEL_DEBUG" ;;
+        "INFO")  echo "$LOG_LEVEL_INFO" ;;
+        "WARN")  echo "$LOG_LEVEL_WARN" ;;
+        "ERROR") echo "$LOG_LEVEL_ERROR" ;;
+        "FATAL") echo "$LOG_LEVEL_FATAL" ;;
+        *)       echo "$LOG_LEVEL_INFO" ;;
+    esac
 }
 
 should_log() {
-    local level=$1
-    local current_level_num=$(log_level_numeric "$LOG_LEVEL")
-    local requested_level_num=$(log_level_numeric "$level")
+    local level="${1:-INFO}"
+    local current_level_num
+    local requested_level_num
+
+    current_level_num=$(log_level_numeric "$LOG_LEVEL")
+    requested_level_num=$(log_level_numeric "$level")
+
     [[ $requested_level_num -ge $current_level_num ]]
 }
 
@@ -120,7 +141,6 @@ log_example() {
     echo "log_success 'Success message'"
     echo "log_header 'Main Section Header'"
     echo "log_section 'Sub Section Header'"
-    echo
     echo "Set log level: export LOG_LEVEL=DEBUG|INFO|WARN|ERROR|FATAL"
 }
 
