@@ -42,6 +42,10 @@ FILES_TO_BACKUP=(
     "$HOME/.gitconfig"
     "$HOME/Brewfile"
     "$GIT_IGNORE_FILE"
+    "$HOME/.ssh/config"
+    "$HOME/.config/git/message"
+    "$HOME/.config/starship.toml"
+    "$HOME/.config/bat/config"
 )
 
 # Helper function for yes/no prompts
@@ -65,9 +69,6 @@ main() {
     echo "Starting installation process..."
 
     if confirm "Do you want to install Dotfiles?"; then
-        echo "→ Configuring Neovim..."
-        config_nvim || echo "Warning: Neovim configuration failed"
-
         echo "→ Configuring dotfiles..."
         config_dotfiles || echo "Warning: Dotfiles configuration failed"
     fi

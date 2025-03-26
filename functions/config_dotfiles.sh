@@ -1,3 +1,21 @@
+function execute_scripts() {
+    local scripts_dir="$DOTFILES/scripts"
+    log_section "Executing scripts from $scripts_dir"
+
+    if [ -d "$scripts_dir" ]; then
+        for script in "$scripts_dir"/*.sh; do
+            if [ -f "$script" ] && [ -x "$script" ]; then
+                log_info "Executing script: $(basename "$script")"
+                bash "$script"
+            else
+                log_warn "Script not executable: $(basename "$script")"
+            fi
+        done
+    else
+        log_warn "Scripts directory not found: $scripts_dir"
+    fi
+}
+
 function config_dotfiles() {
     local timestamp=$(date +"%Y%m%d_%H%M%S")
     local backup_root="$HOME/.dotfiles_backups"
@@ -97,25 +115,113 @@ function config_dotfiles() {
     log_section "Cleaning up old backups"
     ls -1dt "$backup_root"/backup_* 2>/dev/null | tail -n +6 | xargs -r rm -rf
 
+    setup_config_dirs
+    setup_ssh
+    setup_bin_directory
+    execute_scripts
+
     log_success "Dotfiles configuration completed successfully"
 }
 
+# Keep this one as it's the newer neovim setup
 function config_nvim(){
-    mkdir -p ~/.vim/colors ~/.vim/autoload ~/.vim/bundle && \
-    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-    ln -sf  $VIM_DIR/colors/solarized.vim ~/.vim/bundle/solarized.vim
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-}
-
-function config_nvim(){
-  sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  mkdir  ~/.config/nvim
-  ln -s  $DOTS_DIR/init.vim ~/.config/nvim/init.vim
+    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    mkdir -p ~/.config/nvim
+    ln -s $DOTS_DIR/init.vim ~/.config/nvim/init.vim
 }
 
 function install_node(){
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+}
 
+function setup_ssh() {
+    log_section "Setting up SSH configuration"
+
+    # Create SSH directory with correct permissions
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+
+    # Backup existing SSH config
+    backup_file "$HOME/.ssh/config" "$backup_dir"
+
+    # Create symlink for SSH config
+    if [ -f "$DOTS_DIR/.ssh/config" ]; then
+        create_symlink "$DOTS_DIR/.ssh/config" "$HOME/.ssh/config"
+        chmod 600 "$HOME/.ssh/config"
+        log_success "SSH config symlink created"
+    else
+        log_warn "SSH config not found at $DOTS_DIR/.ssh/config"
+    fi
+}
+
+function setup_config_dirs() {
+    log_section "Setting up .config directory structure"
+
+    # Create base .config directory
+    mkdir -p "$HOME/.config"
+
+    # Array of config directories to create and sync
+    local config_dirs=(
+        "git"
+        "nvim"
+        "starship"
+        "kitty"
+        "bat"
+        "htop"
+    )
+
+    # Create directories and symlinks
+    for dir in "${config_dirs[@]}"; do
+        if [ -d "$DOTS_DIR/.config/$dir" ]; then
+            # Backup existing config
+            if [ -d "$HOME/.config/$dir" ]; then
+                backup_file "$HOME/.config/$dir" "$backup_dir"
+            fi
+
+            # Create symlink for entire directory
+            log_info "Setting up $dir configuration..."
+            ln -sf "$DOTS_DIR/.config/$dir" "$HOME/.config/$dir"
+            log_success "$dir configuration linked"
+        fi
+    done
+
+    # Handle individual config files
+    local config_files=(
+        "starship.toml"
+        "bat/config"
+        "git/message"
+    )
+
+    for file in "${config_files[@]}"; do
+        local dir=$(dirname "$file")
+        mkdir -p "$HOME/.config/$dir"
+
+        if [ -f "$DOTS_DIR/.config/$file" ]; then
+            backup_file "$HOME/.config/$file" "$backup_dir"
+            create_symlink "$DOTS_DIR/.config/$file" "$HOME/.config/$file"
+        fi
+    done
+}
+
+function setup_bin_directory() {
+    log_section "Setting up bin directory"
+
+    # Create bin directory if it doesn't exist
+    mkdir -p "$HOME/bin"
+
+    # Copy all files from dotfiles bin directory to home bin
+    if [ -d "$DOTFILES/bin" ]; then
+        log_info "Copying bin files..."
+        for file in "$DOTFILES/bin"/*; do
+            if [ -f "$file" ]; then
+                local filename=$(basename "$file")
+                cp -f "$file" "$HOME/bin/$filename"
+                chmod +x "$HOME/bin/$filename"
+                log_success "Installed: $filename"
+            fi
+        done
+    else
+        log_warn "Bin directory not found at $DOTFILES/bin"
+    fi
 }

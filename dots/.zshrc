@@ -1,25 +1,126 @@
+# Path to oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM=~/zsh_custom
 
+# Theme setting
 ZSH_THEME="robbyrussell"
 
+# Update settings
 zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 
-plugins=(git aliases colored-man-pages colorize command-not-found compleat cp genpass history rsync safe-paste vundle web-search autojump pj docker pip python pyenv virtualenv forklift macos battery rand-quote)
+# History settings
+HISTSIZE=50000
+SAVEHIST=10000
+setopt EXTENDED_HISTORY      # Save timestamps in history
+setopt SHARE_HISTORY        # Share history between sessions
+setopt INC_APPEND_HISTORY   # Add commands to history as they are typed
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first
+setopt HIST_IGNORE_DUPS          # Don't record duplicates
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate
+setopt HIST_FIND_NO_DUPS         # Don't display duplicates during searches
+setopt HIST_IGNORE_SPACE         # Don't record entries starting with a space
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
+setopt HIST_VERIFY              # Show command with history expansion before running it
 
-source $ZSH/oh-my-zsh.sh
+# Directory navigation
+setopt AUTO_CD              # If command is a directory path, cd into it
+setopt AUTO_PUSHD          # Make cd push old directory onto directory stack
+setopt PUSHD_IGNORE_DUPS   # Don't push duplicates onto directory stack
+setopt PUSHD_MINUS         # Exchange meaning of + and - for current vs last dir
 
-setopt APPEND_HISTORY
+# Completion settings
+setopt COMPLETE_IN_WORD    # Complete from both ends of a word
+setopt ALWAYS_TO_END       # Move cursor to end of word after completion
+setopt PATH_DIRS           # Perform path search even on command names with slashes
+setopt AUTO_MENU           # Show completion menu on successive tab press
+setopt AUTO_LIST           # Automatically list choices on ambiguous completion
+setopt AUTO_PARAM_SLASH    # If completed parameter is a directory, add a trailing slash
+setopt NO_BEEP            # Don't beep on ambiguous completions
 
-if [[ "$(uname -s)" != "Linux" ]]; then
-	HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-	if [ -f "$HB_CNF_HANDLER" ]; then
-		source "$HB_CNF_HANDLER";
-	fi
+# Additional plugins to consider
+plugins=(
+    git
+    aliases
+    colored-man-pages
+    colorize
+    command-not-found
+    cp
+    history
+    rsync
+    safe-paste
+    web-search
+    autojump
+    docker
+    pip
+    python
+    pyenv
+    virtualenv
+    forklift
+    macos
+    battery
+    docker-compose
+    npm
+    brew
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+)
+
+# Homebrew completions
+if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+    # Only regenerate completions once per day
+    autoload -Uz compinit
+    if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump) ]; then
+        compinit
+    else
+        compinit -C
+    fi
 fi
 
+# Load Oh My Zsh
 source $ZSH/oh-my-zsh.sh
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Source all custom configurations
+for config_file ($ZSH_CUSTOM/*.zsh(N)); do
+  source $config_file
+done
+
+# Homebrew command not found handler
+if [[ "$(uname -s)" != "Linux" ]]; then
+    HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+    if [ -f "$HB_CNF_HANDLER" ]; then
+        source "$HB_CNF_HANDLER";
+    fi
+fi
+
+# Better directory navigation
+setopt autocd autopushd pushdignoredups
+
+# Command execution time stamp shown in the history
+HIST_STAMPS="yyyy-mm-dd"
+
+# Compilation flags
+export ARCHFLAGS="-arch $(uname -m)"
+
+# SSH Agent configuration
+if [ -z "$SSH_AUTH_SOCK" ]; then
+   # Check for a currently running instance of the agent
+   RUNNING_AGENT="`ps -ax | grep 'ssh-agent -s' | grep -v grep | wc -l | tr -d '[:space:]'`"
+   if [ "$RUNNING_AGENT" = "0" ]; then
+        # Launch a new instance of the agent
+        ssh-agent -s &> $HOME/.ssh/ssh-agent
+   fi
+   eval `cat $HOME/.ssh/ssh-agent`
+fi
+
+# Initialize starship prompt
+eval "$(starship init zsh)"
+
+# FZF configuration if installed
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Local config
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

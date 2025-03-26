@@ -1,3 +1,16 @@
+# Load secrets file if it exists
+[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
+
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_CUSTOM=~/zsh_custom
+
+# GPG configuration
+export GPG_TTY=$(tty)                           # For GPG signing
+export GNUPGHOME="$HOME/.gnupg"                 # GPG home directory
+
+# Path exports
+export PATH="$HOME/bin:/usr/local/bin:$PATH"
+
 # ======================
 # Language & Locale
 # ======================
@@ -5,27 +18,9 @@ export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 export PYTHONIOENCODING='UTF-8'
 
-# ======================
-# Editor & Terminal
-# ======================
-export EDITOR='nvim'  # Using Neovim as default editor
-export VISUAL="$EDITOR"
-export CLICOLOR=1
-export TERM="xterm-256color"
-
 # Colors for ls and other commands
 export LSCOLORS='ExFxBxDxCxegedabagacad'
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
-
-# ======================
-# History Control
-# ======================
-export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=50000
-export SAVEHIST=10000
-export HISTCONTROL=ignoreboth:erasedups  # ignore duplicates and commands starting with space
-export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"  # ignore common commands
-export HISTTIMEFORMAT="[%F %T] "  # add timestamps to history
 
 # ======================
 # Man Pages & Less
@@ -47,20 +42,35 @@ export MANPAGER='less -X'  # Don't clear the screen after quitting a manual page
 # Development
 # ======================
 # Node.js
-export NODE_ENV='development'
+export NODE_ENV="development"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export NVM_DIR="$HOME/.nvm"
+
 
 # Python
-export PYTHONDONTWRITEBYTECODE=1  # Prevent Python from writing .pyc files
-export PYTHONUNBUFFERED=1         # Force Python output to be unbuffered
+export PYENV_ROOT="$HOME/.pyenv"
+export PYTHONDONTWRITEBYTECODE=1  # Prevent creation of .pyc files
 
-# Go
-export GOPATH="$HOME/go"
-export GOBIN="$GOPATH/bin"
 
-# Ruby
-export GEM_HOME="$HOME/.gem"
-export BUNDLE_PATH="$GEM_HOME"
+# Java
+export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
+
+# Docker
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
+# ======================
+# Editor & Terminal
+# ======================
+export EDITOR="code -w"
+export VISUAL="code -w"
+export CLICOLOR=1
+export TERM="xterm-256color"
+
+# XDG Base Directory
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
 
 # ======================
 # Package Managers
@@ -69,17 +79,47 @@ export BUNDLE_PATH="$GEM_HOME"
 export HOMEBREW_NO_ANALYTICS=1          # Disable Homebrew analytics
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export HOMEBREW_NO_AUTO_UPDATE=1        # Prevent auto-update on install
-export HOMEBREW_AUTO_UPDATE_SECS=86400  # Update check once per day
+export HOMEBREW_AUTO_UPDATE_SECS=86400  # Update check every 24 hours
+
+# Additional Homebrew settings
+export HOMEBREW_NO_ENV_HINTS=1          # Disable hints about shell environment
+export HOMEBREW_NO_INSECURE_REDIRECT=1  # Prevent insecure redirects
+export HOMEBREW_NO_INSTALL_CLEANUP=1    # Prevent auto cleanup of old versions
+export HOMEBREW_BAT=1                   # Use bat for brew cat if available
+export HOMEBREW_EDITOR="cursor"           # Use VS Code as editor
+export HOMEBREW_FORCE_BREWED_CURL=1     # Use Homebrew's curl instead of system
+export HOMEBREW_DISPLAY_INSTALL_TIMES=1 # Show install times for packages
+export HOMEBREW_NO_EMOJI=1              # Disable emoji in output
+export HOMEBREW_GITHUB_API_TOKEN=$GITHUB_TOKEN  # Use GitHub token for API requests
+export HOMEBREW_CASK_OPTS="--appdir=/Applications --fontdir=/Library/Fonts"
+export HOMEBREW_COLOR=1                 # Force color output even in pipes
 
 # ======================
 # Path Modifications
 # ======================
-# Add local bins to PATH
+# Define paths array for better management
+typeset -U path  # Ensure unique entries
+
+# Homebrew paths (prioritized)
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
+# User specific paths
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
-export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export PATH="$GOBIN:$PATH"
-export PATH="$GEM_HOME/bin:$PATH"
+
+# Python paths
+export PATH="$HOME/.pyenv/bin:$PATH"
+export PATH="$HOME/.pyenv/shims:$PATH"
+
+# VSCode
+export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+
+# Custom scripts
+export PATH="$HOME/.scripts:$PATH"
+
+# Remove duplicate entries
+typeset -U PATH
 
 # ======================
 # Application Specific
@@ -99,7 +139,28 @@ export ARCHFLAGS="-arch $(uname -m)"
 export MAKEFLAGS="-j$(nproc)"
 
 # ======================
-# Security
+# Security & Signing
 # ======================
-export GPG_TTY=$(tty)  # For GPG signing
+# GPG configuration
+export GPG_TTY=$(tty)                           # For GPG signing
+export GNUPGHOME="$HOME/.gnupg"                 # GPG home directory
+
+# SSH configuration
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
+
+# Security preferences
+export CURL_SSL_VERIFY=true                     # Always verify SSL certificates
+export NODE_TLS_REJECT_UNAUTHORIZED=1           # Enforce TLS certificate validation
+export SSL_CERT_DIR="/etc/ssl/certs"           # SSL certificates directory
+
+# Add any other exports here# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration
+# PATH Configuration

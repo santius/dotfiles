@@ -8,6 +8,10 @@ brew "bash-completion"
 brew "tmux"
 brew "shellcheck"
 brew "thefuck"
+brew "completions"
+brew "link"
+brew "mas"
+brew "rsync"
 
 # Text Editors
 brew "vim"
@@ -30,7 +34,6 @@ brew "ack"
 brew "tree"
 brew "ranger"
 brew "bat"          # Better cat
-brew "exa"          # Better ls
 brew "zoxide"       # Better cd
 brew "fzf"          # Fuzzy finder
 brew "autojump"
@@ -92,7 +95,6 @@ brew "gifsicle"
 
 # Audio/Video
 brew "ffmpeg"
-brew "youtube-dl"
 brew "mp3gain"
 
 # Text/Font
@@ -105,7 +107,6 @@ brew "fontforge"
 # ====================
 brew "awscli"
 brew "azure-cli"
-brew "docker"
 brew "docker-compose"
 brew "kubernetes-cli"
 brew "terraform"
@@ -138,20 +139,35 @@ brew "calcurse"     # Calendar
 # Casks (GUI Apps)
 # ====================
 cask "visual-studio-code"
-cask "iterm2"
+cask "ghostty"
 cask "rectangle"    # Window management
 cask "alfred"
 cask "docker"
 cask "google-chrome"
 cask "firefox"
 cask "slack"
-cask "zoom"
-cask "1password"
 cask "dropbox"
-
+cask "alfred"
+cask "discord"
 # ====================
 # Mac App Store Apps
 # ====================
-mas "Xcode", id: 497799835
-mas "Magnet", id: 441258766
 mas "The Unarchiver", id: 425424353
+
+
+# Fonts
+cask "font-lato"
+cask "font-go"
+
+# Nerd Fonts for your IDE
+# https://www.nerdfonts.com/font-downloads
+
+cask "font-bad-script"
+# FiraMono Nerd Font Mono
+cask "font-fira-mono-nerd-font"
+# Cascadia Code
+cask "font-caskaydia-cove-nerd-font"
+# VictorMono Nerd Font Mono
+cask "font-victor-mono-nerd-font"
+# JetBrainsMonoNL Nerd Font Mono
+cask "font-jetbrains-mono-nerd-font"
