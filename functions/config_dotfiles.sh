@@ -4,11 +4,12 @@ function execute_scripts() {
 
     if [ -d "$scripts_dir" ]; then
         for script in "$scripts_dir"/*.sh; do
-            if [ -f "$script" ] && [ -x "$script" ]; then
+            if [ -f "$script" ]; then
+                log_info "Making script executable: $(basename "$script")"
+                chmod +x "$script"
+
                 log_info "Executing script: $(basename "$script")"
                 bash "$script"
-            else
-                log_warn "Script not executable: $(basename "$script")"
             fi
         done
     else

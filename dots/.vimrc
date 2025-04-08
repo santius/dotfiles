@@ -6,7 +6,10 @@ syntax enable                 " Enable syntax highlighting
 filetype plugin indent on     " Enable file type detection
 
 " Color scheme
-colorscheme solarized
+if has('termguicolors')
+    set termguicolors
+endif
+let g:solarized_termcolors=256
 let g:solarized_termtrans=1
 set background=dark
 set termguicolors            " Enable true color support
@@ -67,6 +70,22 @@ set backspace=indent,eol,start  " Make backspace work as expected
 set noerrorbells        " Disable error bells
 set visualbell t_vb=    " Disable visual bell
 
+" Additional UI improvements
+set cmdheight=2             " Give more space for displaying messages
+set shortmess+=c           " Don't pass messages to ins-completion-menu
+set pumheight=10           " Makes popup menu smaller
+set splitright             " Vertical splits will automatically be to the right
+set splitbelow            " Horizontal splits will automatically be below
+set conceallevel=0        " So that I can see `` in markdown files
+set showtabline=2         " Always show tabs
+
+" Better backup, swap and undo persistence
+set directory=$HOME/.vim/swp//     " Centralize swp files
+set backup
+set backupdir=$HOME/.vim/backup//  " Centralize backups
+set undofile
+set undodir=$HOME/.vim/undo//      " Centralize undo history
+
 " ====================
 " Key Mappings
 " ====================
@@ -101,6 +120,72 @@ nnoremap <leader>ss :call StripWhitespace()<CR>
 " Save with sudo
 command! W w !sudo tee % > /dev/null
 
+" Additional Key Mappings
+" Quick edit/source vimrc
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+
+" Window resizing with Leader key (more macOS friendly)
+nnoremap <leader>h :resize -2<CR>
+nnoremap <leader>l :resize +2<CR>
+nnoremap <leader>k :vertical resize -2<CR>
+nnoremap <leader>j :vertical resize +2<CR>
+
+" Better indenting
+vnoremap < <gv
+vnoremap > >gv
+
+" Move selected line / block of text in visual mode
+xnoremap K :move '<-2<CR>gv-gv
+xnoremap J :move '>+1<CR>gv-gv
+
+" Better tab navigation
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+
+" Toggle functions
+nnoremap <leader>z :set wrap!<CR>
+nnoremap <leader>n :set number!<CR>
+nnoremap <leader>p :set paste!<CR>
+
+" Toggle NERDTree with leader key
+nnoremap <leader>e :NERDTreeToggle<CR>
+
+" Toggle NERDTree with Ctrl+n
+nnoremap <C-n> :NERDTreeToggle<CR>
+
+" Find current file in NERDTree
+nnoremap <leader>nf :NERDTreeFind<CR>
+
+" NERDTree settings
+let NERDTreeShowHidden=1                " Show hidden files
+let NERDTreeMinimalUI=1                 " Hide help text
+let NERDTreeAutoDeleteBuffer=1          " Delete buffer when file is deleted
+let NERDTreeQuitOnOpen=0               " Keep NERDTree open when opening a file
+let NERDTreeIgnore=['\.DS_Store$', '\.git$', '\.svn$', '\.hg$', 'node_modules$']
+
+" Theme switching shortcuts
+nnoremap <leader>t1 :colorscheme solarized<CR>
+nnoremap <leader>t2 :colorscheme gruvbox<CR>
+nnoremap <leader>t3 :colorscheme nord<CR>
+nnoremap <leader>t4 :colorscheme dracula<CR>
+nnoremap <leader>t5 :colorscheme onedark<CR>
+nnoremap <leader>t6 :colorscheme palenight<CR>
+nnoremap <leader>t7 :colorscheme tender<CR>
+nnoremap <leader>t8 :colorscheme catpuccin<CR>
+
+" Add a function to toggle dark/light mode
+function! ToggleBackground()
+    if &background == "dark"
+        set background=light
+    else
+        set background=dark
+    endif
+endfunction
+nnoremap <leader>bg :call ToggleBackground()<CR>
+
 " ====================
 " Functions
 " ====================
@@ -112,6 +197,17 @@ function! StripWhitespace()
 	call setpos('.', save_cursor)
 	call setreg('/', old_query)
 endfunction
+
+" Switch between Catppuccin flavors
+function! SwitchCatppuccinFlavour()
+  let flavours = ['latte', 'frappe', 'macchiato', 'mocha']
+  let current = index(flavours, g:catppuccin_flavour)
+  let next = (current + 1) % len(flavours)
+  let g:catppuccin_flavour = flavours[next]
+  colorscheme catppuccin
+  echo "Catppuccin flavour: " . g:catppuccin_flavour
+endfunction
+nnoremap <leader>cf :call SwitchCatppuccinFlavour()<CR>
 
 " ====================
 " Auto Commands
@@ -159,3 +255,111 @@ let g:ctrlp_custom_ignore={
 
 " Status line configuration
 set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)
+
+" ALE (Linting) settings
+if exists('g:loaded_ale')
+    let g:ale_sign_error = '✘'
+    let g:ale_sign_warning = '⚠'
+    let g:ale_linters = {
+    \   'python': ['flake8', 'pylint'],
+    \   'javascript': ['eslint'],
+    \}
+endif
+
+" ====================
+" Advanced Functions
+" ====================
+" Add these new functions
+
+" Toggle between number and relativenumber
+function! ToggleNumber()
+    if(&relativenumber == 1)
+        set norelativenumber
+        set number
+    else
+        set relativenumber
+    endif
+endfunction
+nnoremap <leader>r :call ToggleNumber()<CR>
+
+" Delete trailing white space on save
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+autocmd BufWritePre * :call CleanExtraSpaces()
+
+" ====================
+" File Type Specific Settings
+" ====================
+augroup FileTypeSpecific
+    autocmd!
+    " Python
+    autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4
+    " JavaScript/TypeScript
+    autocmd FileType javascript,typescript setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+    " Markdown
+    autocmd FileType markdown setlocal wrap spell textwidth=80
+    " Git commit
+    autocmd FileType gitcommit setlocal spell textwidth=72
+augroup END
+
+" Add this to your Plugin Settings section
+" Auto open NERDTree when starting Vim
+autocmd VimEnter * NERDTree | wincmd p
+
+" Close vim if NERDTree is the only window remaining
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Quick switch between NERDTree and file windows
+nnoremap <leader>m :NERDTreeFocus<CR>
+nnoremap <leader>f :wincmd l<CR>
+
+" Terminal commands
+" Open terminal in vertical split
+nnoremap <leader>tv :vertical terminal<CR>
+
+" Open terminal in horizontal split
+nnoremap <leader>th :terminal<CR>
+
+" Open terminal in new tab
+nnoremap <leader>tt :tab terminal<CR>
+
+" Quick shell command execution
+nnoremap <leader>cmd :!
+
+" Add to the Plugin Settings section
+" Theme settings
+" Gruvbox settings
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italic = 1
+
+" Nord settings
+let g:nord_italic = 1
+let g:nord_underline = 1
+let g:nord_italic_comments = 1
+let g:nord_cursor_line_number_background = 1
+
+" Dracula settings
+let g:dracula_italic = 1
+let g:dracula_colorterm = 0
+
+" Onedark settings
+let g:onedark_terminal_italics = 1
+
+" Palenight settings
+let g:palenight_terminal_italics = 1
+
+" Tender settings
+let g:tender_italic = 1
+let g:airline_theme = 'tender'
+
+" Catppuccin settings
+let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
+let g:airline_theme = 'catppuccin'
+
+" Add this to test
+nnoremap <leader>xx :echo "Leader key works!"<CR>

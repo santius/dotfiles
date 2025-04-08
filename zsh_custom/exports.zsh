@@ -3,13 +3,20 @@
 
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM=~/zsh_custom
+export DOWNLOADS="$HOME/Downloads"
+export DESKTOP="$HOME/Desktop"
+export DOCUMENTS="$HOME/Documents"
+export PICTURES="$HOME/Pictures"
+export MOVIES="$HOME/Movies"
+export MUSIC="$HOME/Music"
+export PUBLIC="$HOME/Public"
+export DEV="$HOME/dev"
+
+
 
 # GPG configuration
 export GPG_TTY=$(tty)                           # For GPG signing
 export GNUPGHOME="$HOME/.gnupg"                 # GPG home directory
-
-# Path exports
-export PATH="$HOME/bin:/usr/local/bin:$PATH"
 
 # ======================
 # Language & Locale
@@ -80,8 +87,6 @@ export HOMEBREW_NO_ANALYTICS=1          # Disable Homebrew analytics
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export HOMEBREW_NO_AUTO_UPDATE=1        # Prevent auto-update on install
 export HOMEBREW_AUTO_UPDATE_SECS=86400  # Update check every 24 hours
-
-# Additional Homebrew settings
 export HOMEBREW_NO_ENV_HINTS=1          # Disable hints about shell environment
 export HOMEBREW_NO_INSECURE_REDIRECT=1  # Prevent insecure redirects
 export HOMEBREW_NO_INSTALL_CLEANUP=1    # Prevent auto cleanup of old versions
@@ -94,32 +99,8 @@ export HOMEBREW_GITHUB_API_TOKEN=$GITHUB_TOKEN  # Use GitHub token for API reque
 export HOMEBREW_CASK_OPTS="--appdir=/Applications --fontdir=/Library/Fonts"
 export HOMEBREW_COLOR=1                 # Force color output even in pipes
 
-# ======================
-# Path Modifications
-# ======================
-# Define paths array for better management
-typeset -U path  # Ensure unique entries
 
-# Homebrew paths (prioritized)
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
-export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
-# User specific paths
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-
-# Python paths
-export PATH="$HOME/.pyenv/bin:$PATH"
-export PATH="$HOME/.pyenv/shims:$PATH"
-
-# VSCode
-export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
-
-# Custom scripts
-export PATH="$HOME/.scripts:$PATH"
-
-# Remove duplicate entries
-typeset -U PATH
 
 # ======================
 # Application Specific
@@ -152,15 +133,3 @@ export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
 export CURL_SSL_VERIFY=true                     # Always verify SSL certificates
 export NODE_TLS_REJECT_UNAUTHORIZED=1           # Enforce TLS certificate validation
 export SSL_CERT_DIR="/etc/ssl/certs"           # SSL certificates directory
-
-# Add any other exports here# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration
-# PATH Configuration

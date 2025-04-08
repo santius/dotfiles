@@ -63,30 +63,6 @@ function config_homebrew() {
         log_warn "Brewfile not found at $BREWFILE"
     fi
 
-    # Configure PATH
-    log_info "Configuring PATH..."
-    local path_entries=(
-        "$HOME/bin"                      # User binaries
-        "/opt/homebrew/bin"             # Homebrew binaries (Apple Silicon)
-        "/opt/homebrew/sbin"            # Homebrew system binaries
-        "/usr/local/bin"                # Local binaries
-        "/usr/local/sbin"               # Local system binaries
-        "$HOME/.local/bin"              # Local user binaries
-    )
-
-    # Add paths to exports.zsh
-    local exports_file="$ZSH_CUSTOM/exports.zsh"
-    touch "$exports_file"
-
-    log_info "Updating PATH in exports.zsh..."
-    echo "# PATH Configuration" >> "$exports_file"
-    for entry in "${path_entries[@]}"; do
-        if [[ ":$PATH:" != *":$entry:"* ]]; then
-            echo "export PATH=\"$entry:\$PATH\"" >> "$exports_file"
-            log_success "Added $entry to PATH"
-        fi
-    done
-
     # Setup Homebrew completions
     log_info "Setting up Homebrew completions..."
     if type brew &>/dev/null; then

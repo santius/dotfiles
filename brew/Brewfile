@@ -12,10 +12,10 @@ brew "completions"
 brew "link"
 brew "mas"
 brew "rsync"
+brew "starship"
 
 # Text Editors
 brew "vim"
-brew "neovim"
 brew "nano"
 
 # System Monitoring
@@ -154,14 +154,9 @@ cask "discord"
 # ====================
 mas "The Unarchiver", id: 425424353
 
-
 # Fonts
 cask "font-lato"
 cask "font-go"
-
-# Nerd Fonts for your IDE
-# https://www.nerdfonts.com/font-downloads
-
 cask "font-bad-script"
 # FiraMono Nerd Font Mono
 cask "font-fira-mono-nerd-font"
