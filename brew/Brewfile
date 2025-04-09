@@ -2,42 +2,42 @@
 # Core System Tools
 # ====================
 # Shell and Terminal
-brew "zsh"
-brew "bash"
-brew "bash-completion"
-brew "tmux"
-brew "shellcheck"
-brew "thefuck"
-brew "completions"
-brew "link"
-brew "mas"
-brew "rsync"
+brew "zsh"              # Zsh
+brew "bash"             # Bash
+brew "bash-completion"  # Bash Completion
+brew "tmux"             # Tmux
+brew "shellcheck"       # Shellcheck
+brew "thefuck"          # The Fuck
+brew "completions"      # Completions
+brew "link"             # Link
+brew "mas"              # Mac App Store
+brew "rsync"            # Rsync
 brew "starship"
 
 # Text Editors
-brew "vim"
-brew "nano"
+brew "vim"              # Vim
+brew "nano"             # Nano
 
 # System Monitoring
-brew "htop"
-brew "btop"
-brew "glances"
-brew "neofetch"
-brew "duf"          # Better df
-brew "dust"         # Better du
-brew "procs"        # Better ps
+brew "htop"             # htop
+brew "btop"             # btop
+brew "glances"          # glances
+brew "neofetch"       # neofetch
+brew "duf"            # Better df
+brew "dust"           # Better du
+brew "procs"          # Better ps
 
 # File Management
 brew "fd"           # Better find
 brew "ripgrep"      # Better grep
-brew "ack"
-brew "tree"
-brew "ranger"
+brew "ack"          # Ack
+brew "tree"         # Tree
+brew "ranger"       # Ranger
 brew "bat"          # Better cat
 brew "zoxide"       # Better cd
 brew "fzf"          # Fuzzy finder
-brew "autojump"
-brew "rename"
+brew "autojump"     # Autojump
+brew "rename"       # Rename
 brew "moreutils"    # Collection of tools
 brew "coreutils"    # GNU core utilities
 brew "findutils"    # GNU find utilities
@@ -46,56 +46,56 @@ brew "gnu-sed"      # GNU sed
 # ====================
 # Development Tools
 # ====================
+
 # Version Control
-brew "git"
+brew "git"                  # Git
 brew "gh"           # GitHub CLI
 brew "git-lfs"
 brew "git-flow"
-
-# Programming Languages
-brew "python"
-brew "node"
-brew "go"
-brew "rust"
-brew "lua"
-brew "luarocks"
-brew "ruby"
-brew "openjdk"
-
-# Development Tools
 brew "jq"           # JSON processor
 brew "yq"           # YAML processor
 brew "httpie"       # Better curl
-brew "pyvim"
-brew "ctags"
-brew "cmake"
-brew "make"
+brew "pyvim"        # Python Vim
+brew "ctags"        # Ctags
+brew "cmake"        # CMake
+brew "make"         # Make
+brew "sqlite"       # SQLite
+brew "pyenv"        # Pyenv
+# Programming Languages
+brew "python"               # Python
+brew "node"                 # Node
+brew "go"                   # Go
+brew "rust"                 # Rust
+brew "lua"                  # Lua
+brew "luarocks"             # LuaRocks
+brew "ruby"                 # Ruby
+brew "openjdk"              # OpenJDK
 
 # ====================
 # Network Tools
 # ====================
-brew "wget"
-brew "curl"
-brew "croc"         # File transfer
-brew "ssh-copy-id"
-brew "nmap"
-brew "mtr"          # Better traceroute
-brew "netcat"
+brew "wget"                 # Wget
+brew "curl"                 # Curl
+brew "croc"                 # File transfer
+brew "ssh-copy-id"          # SSH Copy ID
+brew "nmap"                 # Nmap
+brew "mtr"                  # Better traceroute
+brew "netcat"               # Netcat
 brew "speedtest-cli"
 
 # ====================
 # Media Tools
 # ====================
 # Image Processing
-brew "imagemagick"
-brew "webp"
-brew "jpegoptim"
-brew "optipng"
-brew "gifsicle"
+brew "imagemagick"          # ImageMagick
+brew "webp"                 # WebP
+brew "jpegoptim"            # JPEG Optimizer
+brew "optipng"              # PNG Optimizer
+brew "gifsicle"             # GIF Optimizer
 
 # Audio/Video
-brew "ffmpeg"
-brew "mp3gain"
+brew "ffmpeg"               # FFmpeg
+brew "mp3gain"              # MP3Gain
 
 # Text/Font
 brew "uni"          # Unicode database
@@ -105,17 +105,14 @@ brew "fontforge"
 # ====================
 # Cloud & Container
 # ====================
-brew "awscli"
-brew "azure-cli"
-brew "docker-compose"
-brew "kubernetes-cli"
-brew "terraform"
+brew "awscli"               # AWS CLI
+brew "docker-compose"       # Docker Compose
 
 # ====================
 # Security Tools
 # ====================
-brew "gnupg"
-brew "openssl"
+brew "gnupg"                # GNU Privacy Guard
+brew "openssl"              # OpenSSL
 brew "ssh-audit"
 brew "lynis"        # Security auditing
 brew "age"          # File encryption
@@ -136,49 +133,61 @@ brew "timewarrior"  # Time tracking
 brew "calcurse"     # Calendar
 
 # ====================
-# Casks (GUI Apps)
-# ====================
-cask "visual-studio-code"
-cask "ghostty"
-cask "rectangle"    # Window management
-cask "alfred"
-cask "docker"
-cask "google-chrome"
-cask "firefox"
-cask "slack"
-cask "dropbox"
-cask "alfred"
-cask "discord"
-# ====================
 # Mac App Store Apps
 # ====================
-mas "The Unarchiver", id: 425424353
+mas "The Unarchiver", id: 425424353 # The Unarchiver
 
+# ====================
+# Casks (GUI Apps)
+# ====================
+cask "visual-studio-code"   # VSCode
+cask "ghostty"              # Ghostty
+cask "rectangle"            # Window management
+cask "alfred"               # Alfred
+cask "docker"               # Docker
+cask "google-chrome"        # Chrome
+cask "firefox"              # Firefox
+cask "slack"                # Slack
+cask "dropbox"              # Dropbox
+cask "discord"              # Discord
+cask "microsoft-teams"      # Microsoft Teams
+cask "microsoft-edge"       # Microsoft Edge
+cask "microsoft-outlook"    # Microsoft Outlook
+cask "microsoft-excel"      # Microsoft Excel
+cask "microsoft-powerpoint" # Microsoft PowerPoint
+cask "microsoft-word"       # Microsoft Word
+cask "arc"                   # Arc
+cask "firefox"               # Firefox
+cask "ghostty"              # Ghostty
+cask "telegram"              # Telegram
+cask "whatsapp"              # WhatsApp
+cask "discord"               # Discord
+cask "cyberduck"             # Cyberduck
+cask "github"                # GitHub
+cask "arduino-ide"          # Arduino IDE
+cask "slack"                 # Slack
+cask "home-assistant"       # Home Assistant
+cask "ollama"               # Ollama
+cask "rustdesk"              # RustDesk
+cask "zap"                   # Zap
+cask "karabiner-elements"   # Karabiner Elements
+cask "cursor"                # Cursor
+cask "vlc"                   # VLC
+cask "autodesk-fusion"       # Autodesk Fusion
+cask "bambu-studio"          # Bambu Studio
+cask "microsoft-teams"       # Microsoft Teams
+cask "alt-tab"               # Alt-Tab
+cask "canva"                 # Canva
+cask "gimp"                  # GIMP
+cask "cyberduck"             # Cyberduck
+
+# ====================
 # Fonts
-cask "font-lato"
-cask "font-go"
-cask "font-bad-script"
-# FiraMono Nerd Font Mono
-cask "font-fira-mono-nerd-font"
-# Cascadia Code
-cask "font-caskaydia-cove-nerd-font"
-# VictorMono Nerd Font Mono
-cask "font-victor-mono-nerd-font"
-# JetBrainsMonoNL Nerd Font Mono
-cask "font-jetbrains-mono-nerd-font"
-
-cask "arc"
-cask "firefox"
-cask "ghostty"
-cask "telegram"
-cask "whatsapp"
-cask "discord"
-cask "cyberduck"
-cask "github"
-cask "arduino-ide"
-cask "slack"
-cask "home-assistant"
-cask "ollama"
-cask "rustdesk"
-cask "zap"
-cask "karabiner-elements"
+# ====================
+cask "font-lato"             # Lato
+cask "font-go"               # Go
+cask "font-bad-script"       # Bad Script
+cask "font-fira-mono-nerd-font" # FiraMono Nerd Font Mono
+cask "font-caskaydia-cove-nerd-font" # Cascadia Code
+cask "font-victor-mono-nerd-font" # VictorMono Nerd Font Mono
+cask "font-jetbrains-mono-nerd-font" # JetBrainsMonoNL Nerd Font Mono

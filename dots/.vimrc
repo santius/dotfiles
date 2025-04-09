@@ -27,7 +27,7 @@ set scrolloff=8             " Keep 8 lines above/below cursor
 set sidescrolloff=8         " Keep 8 columns left/right of cursor
 set nowrap                  " Don't wrap lines
 set list                    " Show invisible characters
-set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
+set listchars=tab:>\ ,trail:.,eol:$,nbsp:_,extends:>,precedes:<
 set showmatch               " Show matching brackets
 
 " Search Settings
@@ -94,9 +94,6 @@ let mapleader=","       " Set leader key
 " Quick save
 nnoremap <leader>w :w<CR>
 
-" Clear search highlighting
-nnoremap <leader><space> :noh<CR>
-
 " Buffer navigation
 nnoremap <leader>l :bnext<CR>
 nnoremap <leader>h :bprevious<CR>
@@ -114,9 +111,6 @@ nnoremap <A-k> :m .-2<CR>==
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
-" Strip trailing whitespace
-nnoremap <leader>ss :call StripWhitespace()<CR>
-
 " Save with sudo
 command! W w !sudo tee % > /dev/null
 
@@ -126,38 +120,20 @@ nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Window resizing with Leader key (more macOS friendly)
-nnoremap <leader>h :resize -2<CR>
-nnoremap <leader>l :resize +2<CR>
-nnoremap <leader>k :vertical resize -2<CR>
-nnoremap <leader>j :vertical resize +2<CR>
+nnoremap <leader>j :resize -2<CR>
+nnoremap <leader>k :resize +2<CR>
+nnoremap <leader>l :vertical resize -2<CR>
+nnoremap <leader>h :vertical resize +2<CR>
 
 " Better indenting
 vnoremap < <gv
 vnoremap > >gv
 
-" Move selected line / block of text in visual mode
-xnoremap K :move '<-2<CR>gv-gv
-xnoremap J :move '>+1<CR>gv-gv
-
-" Better tab navigation
-nnoremap <leader>1 1gt
-nnoremap <leader>2 2gt
-nnoremap <leader>3 3gt
-nnoremap <leader>4 4gt
-
-" Toggle functions
-nnoremap <leader>z :set wrap!<CR>
-nnoremap <leader>n :set number!<CR>
-nnoremap <leader>p :set paste!<CR>
-
-" Toggle NERDTree with leader key
-nnoremap <leader>e :NERDTreeToggle<CR>
-
-" Toggle NERDTree with Ctrl+n
-nnoremap <C-n> :NERDTreeToggle<CR>
-
 " Find current file in NERDTree
 nnoremap <leader>nf :NERDTreeFind<CR>
+
+nnoremap <leader><Tab> :NERDTreeToggle<CR>
+nnoremap <leader><f> :NERDTreeFocus<CR>
 
 " NERDTree settings
 let NERDTreeShowHidden=1                " Show hidden files
@@ -174,7 +150,7 @@ nnoremap <leader>t4 :colorscheme dracula<CR>
 nnoremap <leader>t5 :colorscheme onedark<CR>
 nnoremap <leader>t6 :colorscheme palenight<CR>
 nnoremap <leader>t7 :colorscheme tender<CR>
-nnoremap <leader>t8 :colorscheme catpuccin<CR>
+nnoremap <leader>t8 :colorscheme catppuccin<CR>
 
 " Add a function to toggle dark/light mode
 function! ToggleBackground()
@@ -182,7 +158,7 @@ function! ToggleBackground()
         set background=light
     else
         set background=dark
-    endif
+    endif,t8
 endfunction
 nnoremap <leader>bg :call ToggleBackground()<CR>
 
@@ -240,11 +216,11 @@ endif
 " Plugin Settings
 " ====================
 " Enable Pathogen
-execute pathogen#infect()
-
-" NERDTree settings (if installed)
-let NERDTreeShowHidden=1
-let NERDTreeIgnore=['\.DS_Store$', '\.git$', '\.svn$']
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
+filetype plugin indent on
+syntax on
 
 " CtrlP settings (if installed)
 let g:ctrlp_show_hidden=1
@@ -312,7 +288,7 @@ augroup END
 autocmd VimEnter * NERDTree | wincmd p
 
 " Close vim if NERDTree is the only window remaining
-autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Quick switch between NERDTree and file windows
 nnoremap <leader>m :NERDTreeFocus<CR>
@@ -355,7 +331,6 @@ let g:palenight_terminal_italics = 1
 
 " Tender settings
 let g:tender_italic = 1
-let g:airline_theme = 'tender'
 
 " Catppuccin settings
 let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
@@ -363,3 +338,96 @@ let g:airline_theme = 'catppuccin'
 
 " Add this to test
 nnoremap <leader>xx :echo "Leader key works!"<CR>
+
+" Smooth scroll configuration
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 15, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 15, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 15, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 15, 4)<CR>
+
+" Startify configuration
+let g:startify_session_dir = '~/.vim/session'
+let g:startify_lists = [
+      \ { 'type': 'files',     'header': ['   Recent Files']            },
+      \ { 'type': 'dir',       'header': ['   Current Directory: '. getcwd()] },
+      \ { 'type': 'sessions',  'header': ['   Sessions']       },
+      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+      \ ]
+let g:startify_bookmarks = [
+      \ { 'v': '~/.vimrc' },
+      \ { 'z': '~/.zshrc' },
+      \ ]
+
+let s:header_cmd = 'fortune | cowsay -W 80 -f $(cowsay -l | sed "/[A-Z].*$/d" | shuf -n 1)'
+let g:startify_custom_header =  startify#center(split(system(s:header_cmd), '\n'))
+let g:startify_session_autoload = 1
+let g:startify_session_delete_buffers = 1
+let g:startify_change_to_vcs_root = 1
+let g:startify_fortune_use_unicode = 1
+let g:startify_session_persistence = 1
+
+" Make Startify appear when all buffers are closed
+autocmd BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) && winnr('$') == 1 | Startify | endif
+
+" Minimap configuration
+let g:minimap_width = 16
+let g:minimap_auto_start = 1
+let g:minimap_auto_start_win_enter = 1
+let g:minimap_highlight_range = 1
+let g:minimap_highlight_search = 1
+
+" Minimap toggle
+nnoremap <leader>mm :MinimapToggle<CR>
+
+" vim-devicons configuration
+let g:webdevicons_enable = 1
+let g:webdevicons_enable_nerdtree = 1
+let g:webdevicons_enable_airline_tabline = 1
+let g:webdevicons_enable_airline_statusline = 1
+let g:webdevicons_enable_startify = 1
+let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:DevIconsEnableFoldersOpenClose = 1
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+let g:DevIconsEnableFolderExtensionPatternMatching = 1
+
+" Ensure UTF-8 is set
+set encoding=utf8
+
+" Fix alignment issues
+set ambiwidth=single
+
+" vim-cool configuration
+let g:CoolTotalMatches = 1  " Show number of matches in the command line
+
+
+" Airline configuration
+let g:airline_powerline_fonts = 1                 " Enable powerline symbols
+let g:airline#extensions#tabline#enabled = 1      " Enable the tabline
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#branch#enabled = 1       " Show git branch
+let g:airline#extensions#hunks#enabled = 1        " Show git hunks
+let g:airline_skip_empty_sections = 1            " Remove empty sections
+let g:airline#extensions#tabline#enabled = 1
+
+" Add keyboard shortcut to cycle through airline themes
+function! s:AirlineThemeNext()
+  let themes = ['solarized', 'gruvbox', 'dracula', 'onedark', 'palenight', 'tender']
+  let current = index(themes, g:airline_theme)
+  let next = (current + 1) % len(themes)
+  let g:airline_theme = themes[next]
+  AirlineRefresh
+  echo 'Airline theme: ' . g:airline_theme
+endfunction
+
+nnoremap <leader>at :call <SID>AirlineThemeNext()<CR>
+
+" vim-flog configuration
+let g:flog_default_arguments = {
+      \ 'max_count': 512,
+      \ 'all': 1,
+      \ 'date': 'short',
+      \ }
+
+" Flog key mappings
+nnoremap <leader>gf :Flog<CR>
+nnoremap <leader>gfl :Flogsplit<CR>
