@@ -71,6 +71,9 @@ alias gl='git log --oneline'  # Keep this as it's custom format
 alias gcp='git cherry-pick'   # Keep if not in Oh-My-Zsh
 alias pull="git pull"
 alias push="git push"
+alias gc="git checkout"
+alias gm="git commit -m"
+alias ga="git add"
 
 # Docker
 alias d='docker'

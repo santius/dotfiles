@@ -431,3 +431,25 @@ let g:flog_default_arguments = {
 " Flog key mappings
 nnoremap <leader>gf :Flog<CR>
 nnoremap <leader>gfl :Flogsplit<CR>
+
+" Add these settings to your NERDTree section
+let g:NERDTreeWinSize = 30              " Set NERDTree width
+let g:NERDTreeWinPos = "left"          " Keep NERDTree on the left
+let g:NERDTreeCreatePrefix = "silent! keepalt"  " Prevent window jumbling
+
+" Define how files are opened from NERDTree
+let g:NERDTreeCustomOpenArgs = {'file': {'where': 'p', 'keepopen': 1, 'stay': 0}, 'dir': {}}
+
+" Make sure the main window takes the full space
+augroup NERDTreeFix
+    autocmd!
+    " Adjust window sizes after opening a file
+    autocmd BufWinEnter * if &filetype != 'nerdtree' | wincmd = | endif
+
+    " Make sure NERDTree has correct width after window resizing
+    autocmd VimResized * if exists('b:NERDTree') | exec 'vertical resize ' . g:NERDTreeWinSize | endif
+
+    " When opening a new file, make it use the full height
+    autocmd BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree'
+                \ | resize | endif
+augroup END
