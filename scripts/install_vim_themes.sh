@@ -8,10 +8,6 @@ mkdir -p ~/.vim/colors ~/.vim/bundle
 # Create undo, swap and backup directories
 mkdir -p ~/.vim/undo ~/.vim/swp ~/.vim/backup
 
-# Install solarized
-git clone https://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized
-ln -sf ~/.vim/bundle/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/solarized.vim
-
 # Install gruvbox
 git clone https://github.com/morhetz/gruvbox.git ~/.vim/bundle/gruvbox
 ln -sf ~/.vim/bundle/gruvbox/colors/gruvbox.vim ~/.vim/colors/gruvbox.vim

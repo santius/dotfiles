@@ -72,23 +72,7 @@ main() {
         echo "→ Configuring dotfiles..."
         config_dotfiles || echo "Warning: Dotfiles configuration failed"
 
-        # Run the Vim themes installation script
-        if [ -f "$BASE_DIR/scripts/install_vim_themes.sh" ]; then
-            echo "→ Installing Vim themes..."
-            chmod +x "$BASE_DIR/scripts/install_vim_themes.sh"
-            "$BASE_DIR/scripts/install_vim_themes.sh" || echo "Warning: Vim themes installation failed"
-        else
-            echo "Warning: Vim themes script not found at $BASE_DIR/scripts/install_vim_themes.sh"
-        fi
 
-        # Add this section to run the Vim plugins installation script
-        if [ -f "$BASE_DIR/scripts/install_vim_plugins.sh" ]; then
-            echo "→ Installing Vim plugins..."
-            chmod +x "$BASE_DIR/scripts/install_vim_plugins.sh"
-            "$BASE_DIR/scripts/install_vim_plugins.sh" || echo "Warning: Vim plugins installation failed"
-        else
-            echo "Warning: Vim plugins script not found at $BASE_DIR/scripts/install_vim_plugins.sh"
-        fi
     fi
 
     if confirm "Do you want to install Homebrew?"; then

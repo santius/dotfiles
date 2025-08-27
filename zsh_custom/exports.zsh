@@ -69,7 +69,7 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 # ======================
 # Editor & Terminal
 # ======================
-export EDITOR="code -w"
+export EDITOR="nvim"
 export VISUAL="code -w"
 export CLICOLOR=1
 export TERM="xterm-256color"

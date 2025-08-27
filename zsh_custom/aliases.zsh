@@ -17,8 +17,9 @@ alias c='clear'
 alias reload='. ~/.zshrc'
 alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
 alias top=btop
-alias zedit="vim ~/.zshrc"
-alias ls='eza -l -X -a --group-directories-first'
+alias zedit="nvim ~/.zshrc"
+alias vim="nvim"
+alias ls='eza --icons -l --group-directories-first -h -m --git --time-style relative --no-permissions'
 
 # Search and diff
 alias grep='egrep --color=auto'
@@ -27,7 +28,7 @@ alias fgrep='fgrep --color=auto'
 alias diff='colordiff'
 
 # Enhanced commands
-alias vi=vim
+alias vi=nvim
 alias wget='wget -c'
 alias df='df -H'
 alias du='dust'
@@ -37,7 +38,7 @@ alias ports='ss -tulanp'  # Keep modern version
 alias path='echo -e ${PATH//:/\\n}'
 
 # Config editing
-alias aliases="vim $ZSH_CUSTOM/aliases.zsh"
+alias aliases="nvim $ZSH_CUSTOM/aliases.zsh"
 alias hosts="sudo $EDITOR /etc/hosts"
 
 # Common typos

@@ -120,16 +120,53 @@ function config_dotfiles() {
     setup_ssh
     setup_bin_directory
     execute_scripts
+    config_nvim
 
     log_success "Dotfiles configuration completed successfully"
 }
 
 # Keep this one as it's the newer neovim setup
-function config_nvim(){
-    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    mkdir -p ~/.config/nvim
-    ln -s $DOTS_DIR/init.vim ~/.config/nvim/init.vim
+function config_nvim() {
+    log_section "Configuring Neovim"
+
+    # Define directories
+    local nvim_config_dir="$HOME/.config/nvim"
+    local nvim_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
+    local nvim_plug_file="$nvim_data_dir/site/autoload/plug.vim"
+
+    # Backup existing configuration if it exists
+    if [ -d "$nvim_config_dir" ]; then
+        log_info "Backing up existing Neovim configuration"
+        mv "$nvim_config_dir" "$nvim_config_dir.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+
+    # Create necessary directories
+    log_info "Creating Neovim directories"
+    mkdir -p "$nvim_config_dir"
+    mkdir -p "$nvim_data_dir/plugged"
+    mkdir -p "$nvim_data_dir/site/autoload"
+
+    # Install vim-plug if not already installed
+    if [ ! -f "$nvim_plug_file" ]; then
+        log_info "Installing vim-plug"
+        curl -fLo "$nvim_plug_file" --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    fi
+
+    # Create symlink for init.vim
+    if [ -f "$DOTS_DIR/.config/nvim/init.vim" ]; then
+        log_info "Creating symlink for init.vim"
+        ln -sf "$DOTS_DIR/.config/nvim/init.vim" "$nvim_config_dir/init.vim"
+    else
+        log_error "init.vim not found in dotfiles"
+        return 1
+    fi
+
+    # Install plugins
+    log_info "Installing Neovim plugins"
+    nvim --headless +PlugInstall +qall
+
+    log_success "Neovim configuration completed"
 }
 
 function install_node(){

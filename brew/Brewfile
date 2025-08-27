@@ -82,6 +82,9 @@ brew "nmap"                 # Nmap
 brew "mtr"                  # Better traceroute
 brew "netcat"               # Netcat
 brew "speedtest-cli"
+brew "lynx"
+
+
 
 # ====================
 # Media Tools
