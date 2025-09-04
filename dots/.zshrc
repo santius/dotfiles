@@ -116,11 +116,11 @@ if [ -z "$SSH_AUTH_SOCK" ]; then
    eval `cat $HOME/.ssh/ssh-agent`
 fi
 
-# Initialize starship prompt
-eval "$(starship init zsh)"
-
 # FZF configuration if installed
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Local config
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# Initialize starship prompt
+eval "$(starship init zsh)"

@@ -50,8 +50,8 @@ export MANPAGER='less -X'  # Don't clear the screen after quitting a manual page
 # ======================
 # Node.js
 export NODE_ENV="development"
-export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export NVM_DIR="$HOME/.nvm"
+
 
 
 # Python
