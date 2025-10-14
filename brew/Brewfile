@@ -70,6 +70,7 @@ brew "lua"                  # Lua
 brew "luarocks"             # LuaRocks
 brew "ruby"                 # Ruby
 brew "openjdk"              # OpenJDK
+brew "pinentry-mac"           # Pinentry for GPG
 
 # ====================
 # Network Tools

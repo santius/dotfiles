@@ -44,7 +44,8 @@ function config_dotfiles() {
     create_symlink() {
         local source="$1"
         local target="$2"
-        if [ -f "$source" ]; then
+        # Allow creating symlinks for files or directories
+        if [ -e "$source" ]; then
             log_info "Creating symlink: $target -> $source"
             ln -sf "$source" "$target"
         else
@@ -60,12 +61,16 @@ function config_dotfiles() {
 
     # Create symlinks for dotfiles
     log_section "Creating dotfile symlinks"
-    for file in "$DOTS_DIR"/* "$DOTS_DIR"/.*; do
-        case "$(basename "$file")" in
-            .|..|.git|.DS_Store|dots) continue ;;
-            *) create_symlink "$file" "$HOME/$(basename "$file")" ;;
-        esac
-    done
+    if [ -d "$DOTS_DIR" ]; then
+        for file in "$DOTS_DIR"/* "$DOTS_DIR"/.*; do
+            case "$(basename "$file")" in
+                .|..|.git|.DS_Store|dots) continue ;;
+                *) create_symlink "$file" "$HOME/$(basename "$file")" ;;
+            esac
+        done
+    else
+        log_warn "Dots directory not found: $DOTS_DIR"
+    fi
 
     # Create symlinks for zsh custom files
     log_section "Creating Zsh custom symlinks"
@@ -106,6 +111,12 @@ function config_dotfiles() {
     else
         log_warn "Git message template not found at $GIT_DIR/message"
     fi
+
+    # Setup gpg-agent configuration
+    log_info "Setting up gpg-agent configuration..."
+    mkdir -p ~/.gnupg
+    grep -qF "pinentry-program /opt/homebrew/bin/pinentry-mac" ~/.gnupg/gpg-agent.conf 2>/dev/null || \
+    echo "pinentry-program /opt/homebrew/bin/pinentry-mac" >> ~/.gnupg/gpg-agent.conf
 
     # Verify the symlinks were created
     log_info "Verifying git configuration..."

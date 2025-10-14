@@ -1,0 +1,13 @@
+# Commit message template
+# <type>(<scope>): <short summary>
+#
+# Body (optional). Wrap at 72 characters.
+#
+# Footer (e.g. BREAKING CHANGE or issue references)
+#
+# Example:
+# feat(auth): add password reset flow
+#
+# Describe here the purpose of the change and key points.
+
+

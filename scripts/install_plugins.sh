@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Make the script standalone: source the repo logger if available
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+if [ -f "$SCRIPT_DIR/../logger.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$SCRIPT_DIR/../logger.sh"
+fi
+
 echo "Installing Oh My Zsh plugins..."
 
 # Setup Homebrew completions
@@ -15,36 +22,52 @@ if type brew &>/dev/null; then
     # Specifically link brew-services completion
     ln -sf "$(brew --prefix)/opt/brew-services/share/zsh/site-functions/_brew_services" "$(brew --prefix)/share/zsh/site-functions/_brew_services"
 
-    # Update FPATH
+    # Update FPATH (initialize if necessary)
+    FPATH=${FPATH:-}
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
-    # Regenerate completions
-    if [ -n "$ZSH_VERSION" ]; then
-        # Only run these in zsh
+    # Regenerate completions only if zsh is available
+    if command -v zsh >/dev/null 2>&1; then
         zsh -c 'autoload -Uz compinit && compinit'
     else
-        log_warn "Not running in zsh, skipping completion initialization"
+        echo "Not running in zsh, skipping completion initialization"
     fi
 fi
 
 # Create plugins directory
 mkdir -p ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins
 
-# Define plugins to install
-declare -A plugins=(
-    ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions"
-    ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting"
+# Define plugins to install (avoid associative arrays for macOS bash 3.x)
+plugin_names=(
+    "zsh-autosuggestions"
+    "zsh-syntax-highlighting"
+)
+plugin_urls=(
+    "https://github.com/zsh-users/zsh-autosuggestions"
+    "https://github.com/zsh-users/zsh-syntax-highlighting"
 )
 
-# Install Homebrew packages needed for plugins
+# Install Homebrew packages needed for plugins (idempotent)
 echo "Installing required Homebrew packages..."
-brew install autojump kubectl
+packages=(autojump kubectl)
+for pkg in "${packages[@]}"; do
+    if brew list --formula | grep -q "^${pkg}$"; then
+        echo "Warning: $pkg is already installed."
+        echo "To reinstall $pkg, run: brew reinstall $pkg"
+    else
+        echo "Installing $pkg..."
+        brew install "$pkg"
+    fi
+done
 
 # Install external plugins
-for plugin in "${!plugins[@]}"; do
-    if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$plugin" ]; then
+for plugin_index in "${!plugin_names[@]}"; do
+    plugin="${plugin_names[$plugin_index]}"
+    url="${plugin_urls[$plugin_index]}"
+    target_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$plugin"
+    if [ ! -d "$target_dir" ]; then
         echo "Installing $plugin..."
-        git clone "${plugins[$plugin]}" "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$plugin"
+        git clone "$url" "$target_dir"
     else
         echo "$plugin already installed"
     fi
