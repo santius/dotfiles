@@ -71,8 +71,34 @@ main() {
     if confirm "Do you want to install Dotfiles?"; then
         echo "→ Configuring dotfiles..."
         config_dotfiles || echo "Warning: Dotfiles configuration failed"
+        # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
+        if [ -f "$DOTFILES/scripts/configure_gpg_program.sh" ]; then
+            if confirm "Configure git to use the system GPG program (recommended)?"; then
+                # Ask whether to apply immediately or just show dry-run
+                if confirm "Apply the change now (yes = set git config, no = show dry-run)?"; then
+                    echo "→ Setting git gpg.program..."
+                    "$DOTFILES/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
+                else
+                    echo "→ Dry-run: showing what would be configured"
+                    "$DOTFILES/scripts/configure_gpg_program.sh" || true
+                fi
+            fi
+        fi
 
+    fi
 
+    # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
+    if [ -f "$DOTFILES/scripts/configure_gpg_program.sh" ]; then
+        if confirm "Configure git to use the system GPG program (recommended)?"; then
+            # Ask whether to apply immediately or just show dry-run
+            if confirm "Apply the change now (yes = set git config, no = show dry-run)?"; then
+                echo "→ Setting git gpg.program..."
+                "$DOTFILES/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
+            else
+                echo "→ Dry-run: showing what would be configured"
+                "$DOTFILES/scripts/configure_gpg_program.sh" || true
+            fi
+        fi
     fi
 
     if confirm "Do you want to install Homebrew?"; then
