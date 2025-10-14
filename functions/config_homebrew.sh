@@ -69,14 +69,30 @@ function config_homebrew() {
         # Initialize FPATH if not set
         FPATH=${FPATH:-""}
 
-        # Add Homebrew completions to FPATH
-        FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+        BREW_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
+        mkdir -p "$BREW_SITE_FUNCTIONS"
 
-        # Create the completions directory if it doesn't exist
-        mkdir -p "$(brew --prefix)/share/zsh/site-functions"
+        # Only add Homebrew completions to FPATH when directory has files
+        if [ -d "$BREW_SITE_FUNCTIONS" ] && [ "$(ls -A "$BREW_SITE_FUNCTIONS" 2>/dev/null)" ]; then
+            FPATH="$BREW_SITE_FUNCTIONS:${FPATH}"
+        fi
 
-        # Link all Homebrew completions
-        brew completions link
+        # Link all Homebrew completions if available
+        if command -v brew >/dev/null 2>&1; then
+            brew completions link || true
+        fi
+
+        # Ensure specific brew-services completion exists before linking (optional)
+        BREW_SERVICES_OPT="$(brew --prefix)/opt/brew-services/share/zsh/site-functions/_brew_services"
+        BREW_SERVICES_TARGET="$BREW_SITE_FUNCTIONS/_brew_services"
+        if [ -f "$BREW_SERVICES_OPT" ]; then
+            ln -sf "$BREW_SERVICES_OPT" "$BREW_SERVICES_TARGET"
+        else
+            # Remove stale symlink if target exists but source missing
+            if [ -L "$BREW_SERVICES_TARGET" ] && [ ! -e "$BREW_SERVICES_TARGET" ]; then
+                rm -f "$BREW_SERVICES_TARGET"
+            fi
+        fi
     fi
 
     log_success "Homebrew configuration completed"

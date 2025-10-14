@@ -67,16 +67,33 @@ plugins=(
     zsh-syntax-highlighting
 )
 
-# Homebrew completions
+# Homebrew completions - guard against missing files to avoid compinit errors
+#
+# If you see errors like:
+#   compinit:527: no such file or directory: /opt/homebrew/share/zsh/site-functions/_brew_services
+# it's because a stale symlink points to a completion that isn't installed.
+# To restore the completion, install or reinstall the package that provides it, e.g:
+#   brew install brew-services
+# or remove the stale symlink under $(brew --prefix)/share/zsh/site-functions.
 if type brew &>/dev/null; then
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    BREW_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
 
-    # Only regenerate completions once per day
+    # Only add Homebrew completions to FPATH when the directory exists and contains files
+    if [ -d "$BREW_SITE_FUNCTIONS" ] && [ "$(ls -A "$BREW_SITE_FUNCTIONS" 2>/dev/null)" ]; then
+        FPATH="$BREW_SITE_FUNCTIONS:${FPATH}"
+    fi
+
+    # Initialize compinit safely. Use a consistent zcompdump path and avoid stat errors
     autoload -Uz compinit
-    if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump) ]; then
-        compinit
+    ZCOMP_DUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+    if [ -f "$ZCOMP_DUMP" ]; then
+        if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' "$ZCOMP_DUMP")" ]; then
+            compinit
+        else
+            compinit -C
+        fi
     else
-        compinit -C
+        compinit
     fi
 fi
 

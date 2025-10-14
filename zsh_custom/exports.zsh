@@ -14,6 +14,9 @@ export DEV="$HOME/dev"
 
 
 
+# ======================
+# Security & Signing
+# ======================
 # GPG configuration
 export GPG_TTY=$(tty)                           # For GPG signing
 export GNUPGHOME="$HOME/.gnupg"                 # GPG home directory
@@ -49,15 +52,12 @@ export MANPAGER='less -X'  # Don't clear the screen after quitting a manual page
 # Development
 # ======================
 # Node.js
-export NODE_ENV="development"
+export NODE_ENV="developnoment"
 export NVM_DIR="$HOME/.nvm"
-
-
 
 # Python
 export PYENV_ROOT="$HOME/.pyenv"
 export PYTHONDONTWRITEBYTECODE=1  # Prevent creation of .pyc files
-
 
 # Java
 export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
@@ -99,9 +99,6 @@ export HOMEBREW_GITHUB_API_TOKEN=$GITHUB_TOKEN  # Use GitHub token for API reque
 export HOMEBREW_CASK_OPTS="--appdir=/Applications --fontdir=/Library/Fonts"
 export HOMEBREW_COLOR=1                 # Force color output even in pipes
 
-
-
-
 # ======================
 # Application Specific
 # ======================
@@ -118,13 +115,6 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
 export MAKEFLAGS="-j$(nproc)"
-
-# ======================
-# Security & Signing
-# ======================
-# GPG configuration
-export GPG_TTY=$(tty)                           # For GPG signing
-export GNUPGHOME="$HOME/.gnupg"                 # GPG home directory
 
 # SSH configuration
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
