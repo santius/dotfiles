@@ -2,7 +2,6 @@
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Plugins
-Plug 'morhetz/gruvbox'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'        " Status line
 Plug 'vim-airline/vim-airline-themes' " Airline themes
@@ -31,11 +30,6 @@ Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
 " Add your other plugins here
 call plug#end()
 
-" Gruvbox configuration
-colorscheme gruvbox
-set background=dark    " or light if you prefer
-let g:gruvbox_contrast_dark = 'medium'    " Options: soft, medium, hard
-let g:gruvbox_italic = 1
 
 " ====================
 " Basic Settings
@@ -305,10 +299,6 @@ nnoremap <leader>tt :tab terminal<CR>
 nnoremap <leader>cmd :!
 
 " Add to the Plugin Settings section
-" Theme settings
-" Gruvbox settings
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italic = 1
 
 " Nord settings
 let g:nord_italic = 1
@@ -354,7 +344,6 @@ let g:startify_bookmarks = [
 
 " Optional: Add custom header (using fortune and cowsay if you have them installed)
 let s:header_cmd = 'fortune | cowsay -W 80'
-let g:startify_custom_header = startify#center(split(system(s:header_cmd), '\n'))
 " Make Startify appear when all buffers are closed
 "
 autocmd BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) && winnr('$') == 1 | Startify | endif
@@ -401,7 +390,6 @@ let g:airline#extensions#tabline#enabled = 1
 
 " Add keyboard shortcut to cycle through airline themes
 function! s:AirlineThemeNext()
-  let themes = ['gruvbox']  " Remove unused themes
   let current = index(themes, g:airline_theme)
   let next = (current + 1) % len(themes)
   let g:airline_theme = themes[next]

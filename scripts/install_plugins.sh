@@ -52,10 +52,7 @@ echo "Installing required Homebrew packages..."
 packages=(autojump kubectl)
 for pkg in "${packages[@]}"; do
     if brew list --formula | grep -q "^${pkg}$"; then
-        echo "Warning: $pkg is already installed."
-        echo "To reinstall $pkg, run: brew reinstall $pkg"
     else
-        echo "Installing $pkg..."
         brew install "$pkg"
     fi
 done

@@ -5,8 +5,6 @@ set nocompatible              " Use Vim settings, rather than Vi settings
 syntax enable                 " Enable syntax highlighting
 filetype plugin indent on     " Enable file type detection
 
-" Color scheme
-colorscheme gruvbox
 
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
@@ -150,7 +148,6 @@ let NERDTreeIgnore=['\.DS_Store$', '\.git$', '\.svn$', '\.hg$', 'node_modules$']
 
 " Theme switching shortcuts
 nnoremap <leader>t1 :colorscheme solarized<CR>
-nnoremap <leader>t2 :colorscheme gruvbox<CR>
 nnoremap <leader>t3 :colorscheme nord<CR>
 nnoremap <leader>t4 :colorscheme dracula<CR>
 nnoremap <leader>t5 :colorscheme onedark<CR>
@@ -324,9 +321,6 @@ nnoremap <leader>cmd :!
 
 " Add to the Plugin Settings section
 " Theme settings
-" Gruvbox settings
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italic = 1
 
 " Nord settings
 let g:nord_italic = 1
@@ -374,7 +368,6 @@ let g:startify_bookmarks = [
       \ ]
 
 let s:header_cmd = 'fortune | cowsay -W 80 -f $(cowsay -l | sed "/[A-Z].*$/d" | shuf -n 1)'
-let g:startify_custom_header =  startify#center(split(system(s:header_cmd), '\n'))
 let g:startify_session_autoload = 1
 let g:startify_session_delete_buffers = 1
 let g:startify_change_to_vcs_root = 1
@@ -426,7 +419,7 @@ let g:airline#extensions#tabline#enabled = 1
 
 " Add keyboard shortcut to cycle through airline themes
 function! s:AirlineThemeNext()
-  let themes = ['solarized', 'gruvbox', 'dracula', 'onedark', 'palenight', 'tender']
+  let themes = ['solarized','dracula', 'onedark', 'palenight', 'tender']
   let current = index(themes, g:airline_theme)
   let next = (current + 1) % len(themes)
   let g:airline_theme = themes[next]

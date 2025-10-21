@@ -6,6 +6,8 @@
 #   ./configure_gpg_program.sh --apply # actually sets git config --global gpg.program
 #   ./configure_gpg_program.sh --yes   # same as --apply
 
+echo "Installing gpg program..."
+
 set -euo pipefail
 
 APPLY=false

@@ -119,25 +119,12 @@ setopt autocd autopushd pushdignoredups
 # Command execution time stamp shown in the history
 HIST_STAMPS="yyyy-mm-dd"
 
-# Compilation flags
-export ARCHFLAGS="-arch $(uname -m)"
-
-# SSH Agent configuration
-if [ -z "$SSH_AUTH_SOCK" ]; then
-   # Check for a currently running instance of the agent
-   RUNNING_AGENT="`ps -ax | grep 'ssh-agent -s' | grep -v grep | wc -l | tr -d '[:space:]'`"
-   if [ "$RUNNING_AGENT" = "0" ]; then
-        # Launch a new instance of the agent
-        ssh-agent -s &> $HOME/.ssh/ssh-agent
-   fi
-   eval `cat $HOME/.ssh/ssh-agent`
-fi
-
 # FZF configuration if installed
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Local config
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

@@ -38,6 +38,7 @@ done
 # Files to backup
 FILES_TO_BACKUP=(
     "$HOME/.zshrc"
+    "$HOME/.zprofile"
     "$HOME/.vimrc"
     "$HOME/.gitconfig"
     "$HOME/Brewfile"
