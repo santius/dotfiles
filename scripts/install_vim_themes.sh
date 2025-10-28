@@ -1,6 +1,8 @@
 #!/bin/bash
+# Source dependencies
+source logger.sh
 
-echo "Installing Vim themes..."
+log_info "Installing Vim themes..."
 
 # Create necessary directories
 mkdir -p ~/.vim/colors ~/.vim/bundle
@@ -41,4 +43,4 @@ if [ -f ~/.vim/bundle/catppuccin/colors/catppuccin.vim ]; then
     ln -sf ~/.vim/bundle/catppuccin/colors/catppuccin.vim ~/.vim/colors/catppuccin.vim
 fi
 
-echo "Vim themes installation complete!"
+log_info "Vim themes installation complete!"

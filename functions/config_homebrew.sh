@@ -1,5 +1,5 @@
 function config_homebrew() {
-    log_section "Configuring Homebrew"
+    log_section "HOMEBREW"
 
     # Install Homebrew if not installed
     if ! command -v brew >/dev/null 2>&1; then

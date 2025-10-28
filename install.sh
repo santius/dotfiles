@@ -23,14 +23,14 @@ source "functions/config_mac_defaults.sh"
 
 # Check if running on macOS
 if [[ "$(uname)" != "Darwin" ]]; then
-    echo "Error: This script is designed for macOS only"
+    log_error "Error: This script is designed for macOS only"
     exit 1
 fi
 
 # Check for required dependencies
 for cmd in git curl; do
     if ! command -v "$cmd" &> /dev/null; then
-        echo "Error: $cmd is required but not installed"
+        log_error "Error: $cmd is required but not installed"
         exit 1
     fi
 done
@@ -67,42 +67,36 @@ confirm() {
 main() {
     mkdir -p "$BACKUP_DIR"
 
-    echo "Starting installation process..."
+    log_info "Starting installation process..."
 
     if confirm "Do you want to install Dotfiles?"; then
-        echo "→ Configuring dotfiles..."
-        config_dotfiles || echo "Warning: Dotfiles configuration failed"
-        # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
-        if [ -f "$DOTFILES/scripts/configure_gpg_program.sh" ]; then
-                # Ask whether to apply immediately or just show dry-run
-                    echo "→ Setting git gpg.program..."
-                    "$DOTFILES/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
-        fi
+        log_info "→ Configuring dotfiles..."
+        config_dotfiles || log_warn "Warning: Dotfiles configuration failed"
     fi
 
     # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
     if [ -f "$DOTFILES/scripts/configure_gpg_program.sh" ]; then
-                echo "→ Setting git gpg.program..."
+                log_info "→ Setting git gpg.program..."
                 "$DOTFILES/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
     fi
 
     if confirm "Do you want to install Homebrew?"; then
-        echo "→ Configuring Homebrew..."
-        config_homebrew || echo "Warning: Homebrew configuration failed"
+        log_info "→ Configuring Homebrew..."
+        config_homebrew || log_warn "Warning: Homebrew configuration failed"
     fi
 
     if confirm "Do you want to config MacOS defaults?"; then
         read -p "Enter desired hostname: " hostname
         if [[ -n "$hostname" ]]; then
-            echo "→ Configuring macOS defaults..."
-            config_macos_defaults "$hostname" || echo "Warning: macOS defaults configuration failed"
+            log_info "→ Configuring macOS defaults..."
+            config_macos_defaults "$hostname" || log_warn "Warning: macOS defaults configuration failed"
         else
-            echo "Error: Hostname cannot be empty"
+            log_error "Error: Hostname cannot be empty"
             return 1
         fi
     fi
 
-    echo "Installation completed!"
+    log_success "Installation completed!"
 }
 
 # Run the main function

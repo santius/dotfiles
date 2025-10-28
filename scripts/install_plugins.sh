@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Source dependencies
+source logger.sh
+
 # Make the script standalone: source the repo logger if available
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 if [ -f "$SCRIPT_DIR/../logger.sh" ]; then
@@ -52,7 +55,6 @@ echo "Installing required Homebrew packages..."
 packages=(autojump kubectl)
 for pkg in "${packages[@]}"; do
     if brew list --formula | grep -q "^${pkg}$"; then
-    else
         brew install "$pkg"
     fi
 done
@@ -63,15 +65,15 @@ for plugin_index in "${!plugin_names[@]}"; do
     url="${plugin_urls[$plugin_index]}"
     target_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$plugin"
     if [ ! -d "$target_dir" ]; then
-        echo "Installing $plugin..."
+        log_info "Installing $plugin..."
         git clone "$url" "$target_dir"
     else
-        echo "$plugin already installed"
+        log_warn "$plugin already installed"
     fi
 done
 
 # Verify built-in plugins
-echo "Verifying built-in plugins..."
+log_info "Verifying built-in plugins..."
 builtin_plugins=(
     "git"
     "aliases"
@@ -101,5 +103,5 @@ for plugin in "${builtin_plugins[@]}"; do
     fi
 done
 
-echo "Plugin installation complete!"
-echo "Please run 'source ~/.zshrc' to activate the changes"
+log_success "Plugin installation complete!"
+log_info "Please run 'source ~/.zshrc' to activate the changes"

@@ -6,7 +6,9 @@
 #   ./configure_gpg_program.sh --apply # actually sets git config --global gpg.program
 #   ./configure_gpg_program.sh --yes   # same as --apply
 
-echo "Installing gpg program..."
+# Source dependencies
+source logger.sh
+log_section "GPG"
 
 set -euo pipefail
 
@@ -39,28 +41,28 @@ for p in "${unique[@]}"; do
 done
 
 if [ -z "$selected" ]; then
-  echo "No gpg binary found on PATH or common locations. Please install gnupg (e.g. 'brew install gnupg')." >&2
+  log_info "No gpg binary found on PATH or common locations. Please install gnupg (e.g. 'brew install gnupg')." >&2
   exit 2
 fi
 
 current=$(git config --global --get gpg.program || true)
 
-echo "Found gpg: $selected"
+log_info "Found gpg: $selected"
 if [ -n "$current" ]; then
-  echo "Git currently has gpg.program='$current'"
+  log_info "Git currently has gpg.program='$current'"
 else
-  echo "Git currently has no gpg.program set"
+  log_info "Git currently has no gpg.program set"
 fi
 
 if [ "$current" = "$selected" ]; then
-  echo "gpg.program already set to the found binary. Nothing to do."
+  log_warn "gpg.program already set to the found binary. Nothing to do."
   exit 0
 fi
 
 if [ "$APPLY" = true ]; then
   git config --global gpg.program "$selected"
-  echo "Set git global gpg.program to: $selected"
+  log_info "Set git global gpg.program to: $selected"
 else
-  echo "Dry-run: would run: git config --global gpg.program \"$selected\""
-  echo "Rerun with --apply or --yes to make the change." 
+  log_info "Dry-run: would run: git config --global gpg.program \"$selected\""
+  log_info "Rerun with --apply or --yes to make the change." 
 fi
