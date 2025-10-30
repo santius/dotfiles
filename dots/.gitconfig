@@ -1,0 +1,250 @@
+[user]
+	name = Santiago Hernandez
+	email = santi84@gmail.com
+	signingkey = 772B4DDD8099806A6C18431F0316EEF91303016C
+
+[github]
+	user = $GITHUB_USER
+
+[core]
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	whitespace = trailing-space,space-before-tab
+	pager = less -FRX
+	autocrlf = input
+	untrackedCache = true
+	fsmonitor = true
+	ignorecase = false
+	precomposeUnicode = true
+	quotePath = false
+	compression = 9
+	safecrlf = warn
+	abbrev = 8
+
+[init]
+	defaultBranch = main
+	templateDir = ~/.config/git/template
+
+[commit]
+	gpgSign = true
+	template = ~/.config/git/message
+	verbose = 1
+
+[tag]
+	gpgsign = true
+	sort = version:refname
+
+[pull]
+	rebase = true
+	ff = only
+
+[push]
+	default = current
+	followTags = true
+	autoSetupRemote = true
+
+[fetch]
+	prune = true
+	pruneTags = true
+	parallel = 0
+	writeCommitGraph = true
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+	updateRefs = true
+
+[merge]
+	conflictStyle = diff3
+	ff = only
+	tool = vimdiff
+	verbosity = 2
+	stat = true
+	log = true
+	renameLimit = 0
+
+[diff]
+	algorithm = histogram
+	colorMoved = default
+	colorMovedWS = allow-indentation-change
+	mnemonicPrefix = true
+	renames = copies
+	submodule = log
+	tool = vimdiff
+	wsErrorHighlight = all
+	context = 3
+	indentHeuristic = true
+	compactionHeuristic = true
+
+[status]
+	short = true
+	branch = true
+	showStash = true
+	submoduleSummary = true
+	showUntrackedFiles = all
+
+[color]
+	ui = auto
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[delta]
+	navigate = true
+	light = false
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Dracula
+
+[alias]
+	# Shortcuts
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+	df = diff
+	dc = diff --cached
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+	# Useful aliases
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	amend = commit --amend
+	undo = reset --soft HEAD^
+	stash-all = stash save --include-untracked
+
+	# Branch management
+	branch-clean = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+
+	# Show changes
+	changes = diff --name-status
+	who = shortlog -s --
+
+	# Branch management
+	nb = checkout -b
+	db = branch -d
+	pb = push -u origin HEAD
+
+	# Stash operations
+	sl = stash list
+	sa = stash apply
+	ss = stash save
+	sp = stash pop
+
+	# Log viewing
+	history = log --follow -p --
+	graph = log --graph --date=relative --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+
+	# Search
+	find = "!git ls-files | grep -i"
+	grep = grep -Ii
+
+	# Clean up
+	prune-local = "!git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D"
+
+	# Add these to your aliases
+	root = rev-parse --show-toplevel
+	conflicts = diff --name-only --diff-filter=U
+	recent = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
+	stats = shortlog -sn --all --no-merges
+	contributors = shortlog -sn
+	uncommit = reset --soft HEAD^
+	recommit = commit --amend --no-edit
+	ignore = "!gi() { curl -sL https://www.toptal.com/developers/gitignore/api/$@ ;}; gi"
+
+[branch]
+	autoSetupRebase = always
+	sort = -committerdate
+
+[help]
+	autocorrect = 1
+
+[log]
+	date = iso
+	follow = true
+
+[apply]
+	whitespace = fix
+
+[credential]
+	helper = cache --timeout=3600
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[url "git@github.com:"]
+	insteadOf = gh:
+	pushInsteadOf = github:
+	pushInsteadOf = git://github.com/
+	insteadOf = https://github.com/
+
+[url "git@gitlab.com:"]
+	insteadOf = gl:
+	pushInsteadOf = gitlab:
+	pushInsteadOf = git://gitlab.com/
+
+[includeIf "gitdir:~/work/"]
+	path = ~/.gitconfig-work
+
+[gpg]
+	program = /opt/homebrew/bin/gpg
+
+[transfer]
+	fsckObjects = true
+
+[protocol]
+	version = 2
+
+[rerere]
+	enabled = true
+	autoupdate = true
+
+[blame]
+	markIgnoredLines = true
+	markUnblamableLines = true
+
+[gc]
+	auto = 256
+	autoDetach = false
+	writeCommitGraph = true
+
+[submodule]
+	fetchJobs = 0
+	recurse = true
+
+[pack]
+	threads = 0
+	useSparse = true
+
+[receive]
+	fsckObjects = true
+	advertisePushOptions = true
+
+[feature]
+	manyFiles = true
+	experimental = true
+
+[maintenance]
+	auto = false
+	strategy = incremental
