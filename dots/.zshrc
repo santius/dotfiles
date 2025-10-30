@@ -2,6 +2,9 @@
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM=~/zsh_custom
 
+# Exit early for non-interactive shells to skip heavy setup
+[[ $- != *i* ]] && return
+
 # Theme setting
 ZSH_THEME="robbyrussell"
 
@@ -67,6 +70,27 @@ plugins=(
     zsh-syntax-highlighting
 )
 
+# Cache Homebrew paths once to avoid spawning the Ruby CLI during shell startup
+if (( $+commands[brew] )); then
+    if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+        __DOTFILES_BREW_PREFIX="$HOMEBREW_PREFIX"
+    elif [[ -x /opt/homebrew/bin/brew ]]; then
+        __DOTFILES_BREW_PREFIX="/opt/homebrew"
+    elif [[ -x /usr/local/bin/brew ]]; then
+        __DOTFILES_BREW_PREFIX="/usr/local"
+    else
+        __DOTFILES_BREW_PREFIX="$(command brew --prefix 2>/dev/null)"
+    fi
+
+    if [[ -n "${HOMEBREW_REPOSITORY:-}" ]]; then
+        __DOTFILES_BREW_REPO="$HOMEBREW_REPOSITORY"
+    elif [[ -n "$__DOTFILES_BREW_PREFIX" && -d "$__DOTFILES_BREW_PREFIX/Homebrew" ]]; then
+        __DOTFILES_BREW_REPO="$__DOTFILES_BREW_PREFIX/Homebrew"
+    else
+        __DOTFILES_BREW_REPO="$__DOTFILES_BREW_PREFIX"
+    fi
+fi
+
 # Homebrew completions - guard against missing files to avoid compinit errors
 #
 # If you see errors like:
@@ -75,26 +99,26 @@ plugins=(
 # To restore the completion, install or reinstall the package that provides it, e.g:
 #   brew install brew-services
 # or remove the stale symlink under $(brew --prefix)/share/zsh/site-functions.
-if type brew &>/dev/null; then
-    BREW_SITE_FUNCTIONS="$(brew --prefix)/share/zsh/site-functions"
+if [[ -n "$__DOTFILES_BREW_PREFIX" ]]; then
+    BREW_SITE_FUNCTIONS="${__DOTFILES_BREW_PREFIX}/share/zsh/site-functions"
 
     # Only add Homebrew completions to FPATH when the directory exists and contains files
-    if [ -d "$BREW_SITE_FUNCTIONS" ] && [ "$(ls -A "$BREW_SITE_FUNCTIONS" 2>/dev/null)" ]; then
+    if [ -d "$BREW_SITE_FUNCTIONS" ] && [ "$(command ls -A "$BREW_SITE_FUNCTIONS" 2>/dev/null)" ]; then
         FPATH="$BREW_SITE_FUNCTIONS:${FPATH}"
     fi
+fi
 
-    # Initialize compinit safely. Use a consistent zcompdump path and avoid stat errors
-    autoload -Uz compinit
-    ZCOMP_DUMP="${ZDOTDIR:-$HOME}/.zcompdump"
-    if [ -f "$ZCOMP_DUMP" ]; then
-        if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' "$ZCOMP_DUMP")" ]; then
-            compinit
-        else
-            compinit -C
-        fi
-    else
+# Initialize compinit safely. Use a consistent zcompdump path and avoid stat errors
+autoload -Uz compinit
+ZCOMP_DUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+if [ -f "$ZCOMP_DUMP" ]; then
+    if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' "$ZCOMP_DUMP")" ]; then
         compinit
+    else
+        compinit -C
     fi
+else
+    compinit
 fi
 
 # Load Oh My Zsh
@@ -105,12 +129,21 @@ for config_file ($ZSH_CUSTOM/*.zsh(N)); do
   source $config_file
 done
 
-# Homebrew command not found handler
-if [[ "$(uname -s)" != "Linux" ]]; then
-    HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-    if [ -f "$HB_CNF_HANDLER" ]; then
-        source "$HB_CNF_HANDLER";
-    fi
+# Homebrew command-not-found handlers (newer location first, fall back to the tap)
+if [[ -n "$__DOTFILES_BREW_REPO" ]]; then
+    typeset -a __dotfiles_brew_cnf_handlers
+    __dotfiles_brew_cnf_handlers=(
+        "$__DOTFILES_BREW_REPO/Library/Homebrew/command-not-found/handler.sh"
+        "$__DOTFILES_BREW_REPO/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+    )
+
+    for __dotfiles_brew_handler in "${__dotfiles_brew_cnf_handlers[@]}"; do
+        if [ -f "$__dotfiles_brew_handler" ]; then
+            source "$__dotfiles_brew_handler"
+            break
+        fi
+    done
+    unset __dotfiles_brew_cnf_handlers __dotfiles_brew_handler
 fi
 
 # Better directory navigation
@@ -125,11 +158,29 @@ HIST_STAMPS="yyyy-mm-dd"
 # Local config
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-HOMEBREW_COMMAND_NOT_FOUND_HANDLER="$(brew --repository)/Library/Homebrew/command-not-found/handler.sh"
-if [ -f "$HOMEBREW_COMMAND_NOT_FOUND_HANDLER" ]; then
-  source "$HOMEBREW_COMMAND_NOT_FOUND_HANDLER";
-fi
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+# SDKMAN lazy init keeps startup fast; it loads on first use or when entering a folder with .sdkmanrc.
 export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+    autoload -Uz add-zsh-hook
+
+    _sdkman_lazy_init() {
+        unset -f sdk _sdkman_lazy_init
+        add-zsh-hook -d chpwd _sdkman_auto_env_lazy 2>/dev/null
+        source "$SDKMAN_DIR/bin/sdkman-init.sh"
+        unset -f _sdkman_auto_env_lazy
+    }
+
+    sdk() {
+        _sdkman_lazy_init
+        sdk "$@"
+    }
+
+    _sdkman_auto_env_lazy() {
+        [[ -f .sdkmanrc ]] || return
+        _sdkman_lazy_init
+        (( $+functions[sdkman_auto_env] )) && sdkman_auto_env
+    }
+
+    add-zsh-hook chpwd _sdkman_auto_env_lazy
+    _sdkman_auto_env_lazy
+fi

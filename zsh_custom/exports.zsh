@@ -60,7 +60,22 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PYTHONDONTWRITEBYTECODE=1  # Prevent creation of .pyc files
 
 # Java
-export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
+if [[ -z "${JAVA_HOME:-}" && -x /usr/libexec/java_home ]]; then
+    _dotfiles_java_cache="${XDG_CACHE_HOME:-$HOME/.cache}/java_home"
+    if [[ -f "$_dotfiles_java_cache" ]]; then
+        export JAVA_HOME="$(<"$_dotfiles_java_cache")"
+    else
+        _dotfiles_java_home="$(/usr/libexec/java_home 2>/dev/null)"
+        if [[ -n "$_dotfiles_java_home" ]]; then
+            export JAVA_HOME="$_dotfiles_java_home"
+            mkdir -p "${_dotfiles_java_cache:h}"
+            printf '%s\n' "$JAVA_HOME" >"$_dotfiles_java_cache"
+        fi
+    fi
+    unset _dotfiles_java_cache _dotfiles_java_home
+else
+    export JAVA_HOME
+fi
 
 # Docker
 export DOCKER_BUILDKIT=1
@@ -107,14 +122,24 @@ export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 
 # Ripgrep
-export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+if [ -f "$HOME/.ripgreprc" ]; then
+    export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+else
+    unset RIPGREP_CONFIG_PATH
+fi
 
 # ======================
 # Performance
 # ======================
 # Compilation flags
 export ARCHFLAGS="-arch $(uname -m)"
-export MAKEFLAGS="-j$(nproc)"
+if command -v nproc >/dev/null 2>&1; then
+    _dotfiles_make_jobs="$(nproc)"
+else
+    _dotfiles_make_jobs="$(sysctl -n hw.ncpu 2>/dev/null || echo 1)"
+fi
+export MAKEFLAGS="-j${_dotfiles_make_jobs}"
+unset _dotfiles_make_jobs
 
 # SSH configuration
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
