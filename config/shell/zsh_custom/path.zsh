@@ -31,7 +31,7 @@ add_to_path "$HOME/.rbenv/shims"
 add_to_path "$HOME/.scripts"
 
 # Load dotfiles binaries
-add_to_path "$DOTFILES/bin"
+add_to_path "$HOME/bin"
 
 # Node paths
 add_to_path "$HOME/.npm-global/bin"

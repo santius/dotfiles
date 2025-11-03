@@ -1,174 +1,229 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Exit on error, undefined vars, and pipe failures
 set -euo pipefail
 
-# Check if a computer name was provided
-if [ $# -eq 0 ]; then
-    echo "Error: Please provide a computer name as an argument"
-    echo "Usage: $0 <computer-name>"
-    exit 1
+if [[ "${OSTYPE:-}" != darwin* ]]; then
+  echo "This script is intended for macOS only" >&2
+  exit 1
 fi
 
-# Configuration variables
+if (( $# == 0 )); then
+  echo "Usage: $0 <computer-name>" >&2
+  exit 1
+fi
+
 readonly COMPUTER_NAME="$1"
-readonly LANGUAGES=(en-US)
-readonly LOCALE="enUS"
+readonly LANGUAGES=("en-US")
+readonly LOCALE="en_US"
 readonly MEASUREMENT_UNITS="Centimeters"
-readonly SCREENSHOTS_FOLDER="${HOME}/Pictures/Screenshots"
+readonly SCREENSHOTS_FOLDER="$HOME/Pictures/Screenshots"
+readonly DOTFILES_ROOT="${BASE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
-# Function to apply system settings
+# -----------------------------------------------------------------------------
+# Logging helpers
+# -----------------------------------------------------------------------------
+
+log_info()  { printf '\033[0;32m[INFO]\033[0m %s\n' "$*"; }
+log_warn()  { printf '\033[0;33m[WARN]\033[0m %s\n' "$*" >&2; }
+log_error() { printf '\033[0;31m[ERROR]\033[0m %s\n' "$*" >&2; }
+
+# -----------------------------------------------------------------------------
+# Utility helpers
+# -----------------------------------------------------------------------------
+
+require_command() {
+  local cmd="$1"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    log_error "Required command '$cmd' not found"
+    return 1
+  fi
+}
+
+write_default() {
+  local domain="$1" key="$2" type="$3" value="$4" current desired
+  current=$(defaults read "$domain" "$key" 2>/dev/null || true)
+  case "$type" in
+    bool)
+      case "$value" in
+        1|true|TRUE|yes|YES) desired="1" ; value=true ;;
+        *) desired="0" ; value=false ;;
+      esac
+      ;;
+    int)
+      desired="$value"
+      ;;
+    float|string)
+      desired="$value"
+      ;;
+    *)
+      desired="$value"
+      ;;
+  esac
+
+  if [[ "$current" == "$desired" ]]; then
+    return 0
+  fi
+
+  defaults write "$domain" "$key" -$type "$value"
+}
+
+write_default_bool()    { write_default "$1" "$2" bool "$3"; }
+write_default_int()     { write_default "$1" "$2" int "$3"; }
+write_default_float()   { write_default "$1" "$2" float "$3"; }
+write_default_string()  { write_default "$1" "$2" string "$3"; }
+
+write_default_array() {
+  local domain="$1" key="$2"; shift 2
+  defaults write "$domain" "$key" -array "$@"
+}
+
+run_or_warn() {
+  if ! "$@"; then
+    log_warn "Command failed (ignored): $*"
+  fi
+}
+
+# -----------------------------------------------------------------------------
+# System configuration blocks
+# -----------------------------------------------------------------------------
+
 apply_system_settings() {
-    echo "Applying system settings..."
+  log_info "Preparing to apply system settings"
+  require_command sudo || return 1
 
-    # Quit System Preferences to prevent override
-    osascript -e 'tell application "System Preferences" to quit'
+  if command -v osascript >/dev/null 2>&1; then
+    osascript -e 'tell application "System Preferences" to quit' || true
+  fi
 
-    # Ask for the administrator password upfront
-    sudo -v
-
-    # Keep-alive: update existing `sudo` time stamp until this script has finished
-    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+  sudo -v
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+  local keepalive_pid=$!
+  trap 'kill "${keepalive_pid}" 2>/dev/null || true' EXIT
 }
 
-# Function to set computer name
 set_computer_name() {
-    echo "Setting computer name to: $COMPUTER_NAME"
-
-    sudo scutil --set ComputerName "$COMPUTER_NAME"
-    sudo scutil --set HostName "$COMPUTER_NAME"
-    sudo scutil --set LocalHostName "$COMPUTER_NAME"
-    sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
+  log_info "Configuring computer name to '$COMPUTER_NAME'"
+  run_or_warn sudo scutil --set ComputerName "$COMPUTER_NAME"
+  run_or_warn sudo scutil --set HostName "$COMPUTER_NAME"
+  run_or_warn sudo scutil --set LocalHostName "$COMPUTER_NAME"
+  run_or_warn sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server \
+    NetBIOSName -string "$COMPUTER_NAME"
 }
 
-# Function to configure localization
 configure_localization() {
-    echo "Configuring localization settings..."
-
-    defaults write NSGlobalDomain AppleLanguages -array "${LANGUAGES[@]}"
-    defaults write NSGlobalDomain AppleLocale -string "$LOCALE"
-    defaults write NSGlobalDomain AppleMeasurementUnits -string "$MEASUREMENT_UNITS"
-    defaults write NSGlobalDomain AppleMetricUnits -bool true
-
-    # Set timezone automatically
-    sudo defaults write /Library/Preferences/com.apple.timezone.auto Active -bool YES
-    sudo systemsetup -setusingnetworktime on || true  # Ignore Error:-99
+  log_info "Configuring localization"
+  write_default_array NSGlobalDomain AppleLanguages "${LANGUAGES[@]}"
+  write_default_string NSGlobalDomain AppleLocale "$LOCALE"
+  write_default_string NSGlobalDomain AppleMeasurementUnits "$MEASUREMENT_UNITS"
+  write_default_bool   NSGlobalDomain AppleMetricUnits true
+  run_or_warn sudo defaults write /Library/Preferences/com.apple.timezone.auto Active -bool YES
+  run_or_warn sudo systemsetup -setusingnetworktime on
 }
 
-# Function to configure system behavior
 configure_system() {
-    echo "Configuring system behavior..."
-
-    # System
-    sudo systemsetup -setrestartfreeze on 2> /dev/null || true
-    sudo pmset -a standbydelay 86400
-    defaults write com.apple.sound.beep.feedback -bool false
-    sudo nvram SystemAudioVolume=" "
-    sudo nvram StartupMute=%01
-
-    # Menu bar
-    defaults write com.apple.menuextra.battery ShowPercent YES
-
-    # Windows and animations
-    defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
-    defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-    defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
-    defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+  log_info "Configuring system behaviour"
+  run_or_warn sudo systemsetup -setrestartfreeze on
+  run_or_warn sudo pmset -a standbydelay 86400
+  run_or_warn defaults write com.apple.sound.beep.feedback -bool false
+  run_or_warn sudo nvram SystemAudioVolume=" "
+  run_or_warn sudo nvram StartupMute=%01
+  write_default_bool  com.apple.menuextra.battery ShowPercent true
+  write_default_bool  NSGlobalDomain NSAutomaticWindowAnimationsEnabled false
+  write_default_float NSGlobalDomain NSWindowResizeTime 0.001
+  write_default_bool  NSGlobalDomain NSNavPanelExpandedStateForSaveMode  true
+  write_default_bool  NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 true
 }
 
-# Function to configure keyboard and input
 configure_keyboard() {
-    echo "Configuring keyboard and input..."
-
-    defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-    defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-    defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-    defaults write NSGlobalDomain KeyRepeat -int 1
-    defaults write NSGlobalDomain InitialKeyRepeat -int 15
-    defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+  log_info "Configuring keyboard"
+  write_default_bool NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled false
+  write_default_bool NSGlobalDomain NSAutomaticDashSubstitutionEnabled false
+  write_default_int  NSGlobalDomain AppleKeyboardUIMode 3
+  write_default_int  NSGlobalDomain KeyRepeat 1
+  write_default_int  NSGlobalDomain InitialKeyRepeat 15
+  write_default_bool NSGlobalDomain NSAutomaticSpellingCorrectionEnabled false
 }
 
-# Function to configure trackpad
 configure_trackpad() {
-    echo "Configuring trackpad..."
-
-    # Tap to click
-    defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-    defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-    defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-    defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
-    # Three finger swipe
-    defaults write NSGlobalDomain AppleEnableSwipeNavigateWithScrolls -bool true
-    defaults -currentHost write NSGlobalDomain com.apple.trackpad.threeFingerHorizSwipeGesture -int 1
+  log_info "Configuring trackpad"
+  write_default_bool com.apple.AppleMultitouchTrackpad Clicking true
+  write_default_bool com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking true
+  defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  write_default_int NSGlobalDomain com.apple.mouse.tapBehavior 1
+  write_default_bool NSGlobalDomain AppleEnableSwipeNavigateWithScrolls true
+  defaults -currentHost write NSGlobalDomain com.apple.trackpad.threeFingerHorizSwipeGesture -int 1
 }
 
-# Function to configure screen and screenshots
 configure_screen() {
-    echo "Configuring screen and screenshots..."
-
-    # Screenshot settings
-    mkdir -p "${SCREENSHOTS_FOLDER}"
-    defaults write com.apple.screencapture location -string "${SCREENSHOTS_FOLDER}"
-    defaults write com.apple.screencapture type -string "png"
-    defaults write com.apple.screencapture disable-shadow -bool true
-
-    # Security
-    defaults write com.apple.screensaver askForPassword -int 1
-    defaults write com.apple.screensaver askForPasswordDelay -int 0
+  log_info "Configuring screen and screenshots"
+  mkdir -p "$SCREENSHOTS_FOLDER"
+  write_default_string com.apple.screencapture location "$SCREENSHOTS_FOLDER"
+  write_default_string com.apple.screencapture type png
+  write_default_bool   com.apple.screencapture disable-shadow true
+  write_default_int    com.apple.screensaver askForPassword 1
+  write_default_int    com.apple.screensaver askForPasswordDelay 0
 }
 
-# Function to configure Finder
 configure_finder() {
-    echo "Configuring Finder..."
-
-    # View preferences
-    defaults write com.apple.finder FXPreferredViewStyle Nlsv
-    defaults write com.apple.finder ShowStatusBar -bool true
-    defaults write com.apple.finder ShowPathbar -bool true
-    defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
-
-    # Show hidden files and extensions
-    defaults write com.apple.finder AppleShowAllFiles -bool true
-    defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-
-    # Disable .DS_Store on network and USB
-    defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-    defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+  log_info "Configuring Finder"
+  write_default_string com.apple.finder FXPreferredViewStyle Nlsv
+  write_default_bool   com.apple.finder ShowStatusBar true
+  write_default_bool   com.apple.finder ShowPathbar true
+  write_default_bool   com.apple.finder _FXShowPosixPathInTitle true
+  write_default_bool   com.apple.finder AppleShowAllFiles true
+  write_default_bool   NSGlobalDomain AppleShowAllExtensions true
+  write_default_bool   com.apple.desktopservices DSDontWriteNetworkStores true
+  write_default_bool   com.apple.desktopservices DSDontWriteUSBStores true
 }
 
-# Function to configure Dock
 configure_dock() {
-    echo "Configuring Dock..."
-
-    defaults write com.apple.dock show-process-indicators -bool true
-    defaults write com.apple.dock launchanim -bool false
-    defaults write com.apple.dock autohide -bool false
-    defaults write com.apple.dock showhidden -bool true
-    defaults write com.apple.dock no-bouncing -bool true
-    defaults write com.Apple.Dock show-recents -bool false
+  log_info "Configuring Dock"
+  write_default_bool com.apple.dock show-process-indicators true
+  write_default_bool com.apple.dock launchanim false
+  write_default_bool com.apple.dock autohide false
+  write_default_bool com.apple.dock showhidden true
+  write_default_bool com.apple.dock no-bouncing true
+  write_default_bool com.apple.dock show-recents false
 }
 
-# Main function to run all configurations
+set_wallpaper() {
+  local image="$1"
+
+  if [[ -z "$image" || ! -f "$image" ]]; then
+    log_warn "Wallpaper not applied – file missing: $image"
+    return 0
+  fi
+
+  log_info "Setting wallpaper to $image"
+
+  osascript <<EOF
+tell application "System Events"
+  repeat with d in desktops
+    set picture of d to POSIX file "$image"
+  end repeat
+end tell
+EOF
+}
+
+
 main() {
-    apply_system_settings
-    set_computer_name
-    configure_localization
-    configure_system
-    configure_keyboard
-    configure_trackpad
-    configure_screen
-    configure_finder
-    configure_dock
+  apply_system_settings
+  set_computer_name
+  configure_localization
+  configure_system
+  configure_keyboard
+  configure_trackpad
+  configure_screen
+  configure_finder
+  configure_dock
+  set_wallpaper "$DOTFILES_ROOT/assets/images/wallpapers/flatppuccin_4k_macchiato.png"
 
-    echo "Configuration complete! Some changes may require a restart to take effect."
+  log_info "Configuration complete. Some changes may require a restart."
+
+  log_info "Restarting affected applications"
+  for app in Finder Dock SystemUIServer; do
+    run_or_warn killall "$app"
+  done
 }
 
-# Run the script
 main
-
-# Restart affected applications
-echo "Restarting affected applications..."
-for app in "Finder" "Dock" "SystemUIServer"; do
-    killall "${app}" &> /dev/null || true
-done

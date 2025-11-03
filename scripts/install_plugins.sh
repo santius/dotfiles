@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# Source dependencies
-source logger.sh
+# Source dependencies once if available
+if [[ -z "${_DOTFILES_LOGGER_SOURCED:-}" ]]; then
+    _DOTFILES_LOGGER_SOURCED=1
+    source logger.sh 2>/dev/null || true
+fi
 
 # Make the script standalone: source the repo logger if available
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-if [ -f "$SCRIPT_DIR/../logger.sh" ]; then
+if [ -f "$SCRIPT_DIR/../logger.sh" ] && [[ -z "${_DOTFILES_LOGGER_SOURCED_INC:-}" ]]; then
+    _DOTFILES_LOGGER_SOURCED_INC=1
     # shellcheck source=/dev/null
     source "$SCRIPT_DIR/../logger.sh"
 fi
@@ -31,7 +35,11 @@ if type brew &>/dev/null; then
 
     # Regenerate completions only if zsh is available
     if command -v zsh >/dev/null 2>&1; then
-        zsh -c 'autoload -Uz compinit && compinit'
+        autoload -Uz compinit
+        compinit -C -d ~/.cache/zsh/zcompdump
+        zstyle ':completion:*' use-cache on
+        zstyle ':completion:*' cache-path ~/.cache/zsh
+
     else
         echo "Not running in zsh, skipping completion initialization"
     fi

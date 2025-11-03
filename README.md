@@ -1,108 +1,80 @@
-# Dotfiles Repository
+# Dotfiles
 
-This repository contains my personal configuration files (dotfiles) for setting up and customizing a development environment. It includes settings for Oh My Zsh, Kitty terminal, Vim, macOS defaults, and more.
+Personal macOS bootstrap and dotfile collection for terminal-first development. The repo bundles shell customisations, language toolchains, GUI apps, and opinionated defaults into a single reproducible setup.
 
-## Table of Contents
+## Highlights
 
-- [Dotfiles Repository](#dotfiles-repository)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Dotfiles Included](#dotfiles-included)
-    - [Oh My Zsh](#oh-my-zsh)
-    - [Kitty](#kitty)
-    - [Zsh Custom](#zsh-custom)
-    - [Vim](#vim)
-    - [macOS Defaults](#macos-defaults)
-    - [Brewfile](#brewfile)
-  - [Usage](#usage)
-  - [Installation](#installation)
-  - [License](#license)
+- ⚡️ **Fast Zsh environment** – tuned `.zshrc` with lazy SDKMAN, caching, delta-powered diffs, and rich aliases/functions under `config/shell/zsh_custom/`.
+- 🔧 **One-touch bootstrap** – `install.sh` backs up existing config, symlinks dotfiles, installs Homebrew packages, and optionally syncs fonts.
+- 🍎 **macOS hardening** – `set-defaults.sh <hostname>` applies curated system defaults (Finder, Dock, keyboard, screenshots) with idempotent writes.
+- 🍺 **Curated toolchain** – `config/brew/Brewfile` covers CLI essentials (git, delta, direnv), language runtimes (node, python, go, rust), GUI apps, fonts, and MAS apps.
+- 🧩 **Extensible structure** – scripts for aliases, exports, functions, cron jobs, and custom binaries live under a clear directory layout you can extend.
 
----
+## Requirements
 
-## Overview
+- macOS 13+ with Command Line Tools (`xcode-select --install`)
+- Homebrew (`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`)
+- Git + GPG (for signed commits)
 
-Dotfiles allow you to customize your development environment to increase productivity and efficiency. This repository makes it easy to set up or restore a personalized configuration on a new machine.
+## Quick Start
 
-## Dotfiles Included
+```bash
+# 1. Clone
+ git clone https://github.com/your-username/dotfiles.git ~/dev/dotfiles
+ cd ~/dev/dotfiles
 
-### Oh My Zsh
-- **Files**: `.zshrc`, `zsh_custom/`
-- **Description**:
-  - `.zshrc` configures the Zsh shell, including custom aliases, functions, and theme settings.
-  - `zsh_custom/` contains additional customizations for Oh My Zsh plugins and themes.
+# 2. Inspect / tweak configs (optional)
+ nvim config/home/.zshrc
 
-### Kitty
-- **Files**: `kitty/`
-- **Description**: Configuration for the Kitty terminal emulator, optimized for productivity with custom themes and key bindings.
+# 3. Run the bootstrap (prompts before major steps)
+ ./install.sh --fonts      # add --fonts to copy fonts into /Library/Fonts
 
-### Zsh Custom
-- **Files**: `zsh_custom/`
-- **Description**: Includes additional aliases and customizations to streamline command-line usage and boost productivity.
+# 4. Apply macOS defaults (requires sudo / host name)
+ ./set-defaults.sh my-macbook
 
-### Vim
-- **Files**: `.vimrc`
-- **Description**: Config file for Vim with customizations such as syntax highlighting, custom mappings, and plugins for an enhanced editing experience.
+# 5. Verify Homebrew bundle
+ brew bundle check --file config/brew/Brewfile --verbose
+```
 
-### macOS Defaults
-- **Files**: `set-defaults.sh`
-- **Description**: A script to apply various macOS defaults, optimizing the user experience and improving performance by adjusting system and application settings.
+> **Tip:** rerun `install.sh` when the repo changes; it is idempotent and keeps 5 rotating backups in `~/.dotfiles_backups/`.
 
-### Brewfile
-- **Files**: `Brewfile`
-- **Description**: A Homebrew file listing essential packages and applications for setup on macOS, making it easy to install or restore required tools.
+## Repository Layout
 
-## Usage
+| Path | Purpose |
+| --- | --- |
+| `install.sh` | Main installer (backups, symlinks, executes scripts, configures Neovim/fonts) |
+| `set-defaults.sh` | Idempotent macOS defaults script (requires hostname argument) |
+| `config/brew/Brewfile` | Homebrew Bundle: taps, formulae, casks, MAS entries |
+| `config/home/` | Files mirrored into `$HOME` (zsh, git, ssh, vim, kitty, etc.) |
+| `config/shell/zsh_custom/` | Modular zsh customisations (`aliases.zsh`, `exports.zsh`, `functions.zsh`) |
+| `config/git/` | Git extras (e.g. commit templates) |
+| `scripts/installers/` | Shared bash helpers used by the installer |
+| `scripts/` | Support scripts run during install (e.g. plugin bootstrap) |
+| `assets/fonts/` | Fonts copied when installing with `--fonts` |
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/dotfiles.git
-   cd dotfiles
-   ```
+## Customisation
 
-2. **Review the configurations:**
-   - Look through the files to understand what changes will be made
-   - Modify any settings to match your preferences
+- **Secrets** – drop environment secrets in `~/.secrets`; `config/shell/zsh_custom/exports.zsh` sources it first.
+- **Work profiles** – add per-directory git config via `~/.gitconfig-work` (see `[includeIf]` in the gitconfig).
+- **Extra Zsh modules** – add `.zsh` files under `config/shell/zsh_custom/`; they autoload after Oh My Zsh.
+- **Install scripts** – any executable in `scripts/` (except legacy Vim installers) runs automatically during `install.sh`.
 
-3. **Apply configurations:**
-   ```bash
-   ./install.sh
-   ```
+## Maintenance
 
-## Installation
+- Update Brew packages: `brew bundle install --file config/brew/Brewfile` then `brew bundle cleanup --file config/brew/Brewfile` to prune extras.
+- Refresh plugins / zsh: `omz update && exec zsh`.
+- Regenerate Neovim plugins: `nvim --headless +PlugInstall +qall`.
+- Rotate backups manually: `ls ~/.dotfiles_backups` (installer keeps the last five snapshots).
 
-1. **Prerequisites:**
-   - macOS (recommended latest version)
-   - Git
-   - Command Line Tools for Xcode: `xcode-select --install`
+## Troubleshooting
 
-2. **Install Homebrew:**
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   brew bundle
-   ```
-
-4. **Set up Oh My Zsh:**
-   ```bash
-   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-   ```
-
-5. **Create symbolic links:**
-   ```bash
-   ./setup.sh
-   ```
-
-6. **Apply macOS defaults:**
-   ```bash
-   ./set-defaults.sh
-   ```
+| Issue | Fix |
+| --- | --- |
+| `nvim PlugInstall` complains about `$GIT_DIR` | Installer now unsets `GIT_DIR` before headless plug installs; rerun `install.sh`. |
+| `logger.sh` readonly variable errors | Fixed by guarding color exports; rerun script or source `logger.sh` once. |
+| `brew bundle` missing taps | Run `brew tap homebrew/bundle homebrew/cask homebrew/cask-fonts homebrew/services` then retry with `--file config/brew/Brewfile`. |
+| `set-defaults` commands denied | Some `systemsetup`/`pmset` calls require relaxed Secure Boot; warnings are safe to ignore. |
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-Feel free to fork this repository and customize it to your needs. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+This repo is MIT licensed. Fork, remix, and share improvements via PRs or issues.

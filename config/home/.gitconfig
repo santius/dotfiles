@@ -1,0 +1,246 @@
+[user]
+    name = Santiago Hernandez
+    email = santi84@gmail.com
+    signingkey = 772B4DDD8099806A6C18431F0316EEF91303016C
+    useconfigonly = true
+
+[github]
+    user = $GITHUB_USER
+
+[core]
+    editor = nvim
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
+    pager = delta
+    whitespace = trailing-space,space-before-tab
+    untrackedCache = true
+    fsmonitor = true
+    ignorecase = false
+    precomposeUnicode = true
+    quotePath = false
+    compression = 9
+    safecrlf = warn
+    abbrev = 12
+
+[delta]
+    navigate = true
+    side-by-side = true
+    line-numbers = true
+    syntax-theme = Dracula
+    hyperlinks = true
+    plus-style = "syntax #003800"
+    minus-style = "syntax #380000"
+
+[interactive]
+    diffFilter = delta --color-only
+
+[commit]
+    gpgSign = true
+    template = ~/.config/git/message
+    verbose = 1
+
+[tag]
+    gpgsign = true
+    sort = version:refname
+
+[gpg]
+    program = /opt/homebrew/bin/gpg
+
+[rerere]
+    enabled = true
+    autoupdate = true
+
+[protocol]
+    version = 2
+
+[feature]
+    manyFiles = true
+    experimental = true
+
+[pull]
+    rebase = true
+    ff = only
+
+[push]
+    default = current
+    followTags = true
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+    pruneTags = true
+    parallel = 4
+    writeCommitGraph = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+    updateRefs = true
+
+[merge]
+    conflictStyle = zdiff3
+    ff = only
+    tool = nvimdiff
+    stat = true
+    log = true
+    renameLimit = 0
+
+[diff]
+    algorithm = histogram
+    colorMoved = default
+    colorMovedWS = allow-indentation-change
+    mnemonicPrefix = true
+    renames = copies
+    submodule = log
+    tool = nvimdiff
+    wsErrorHighlight = all
+    context = 3
+    indentHeuristic = true
+    compactionHeuristic = true
+
+[status]
+    short = true
+    branch = true
+    showStash = true
+    submoduleSummary = true
+    showUntrackedFiles = all
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[alias]
+    st = status --short --branch
+    ci = commit
+    co = checkout
+    br = branch
+    df = diff
+    dc = diff --cached
+    lg = log --graph --decorate --abbrev-commit --date=relative --format='%C(cyan)%h%Creset %C(blue)%an%Creset %C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'
+    last = log -1 HEAD
+    amend = commit --amend
+    undo = reset --soft HEAD^ 
+    unstage = reset HEAD --
+    stash-all = stash save --include-untracked
+    branch-clean = !git branch --merged | grep -vE '(^\\*|master|main|develop)' | xargs -r git branch -d
+    changes = diff --name-status
+    who = shortlog -s --
+    nb = checkout -b
+    db = branch -d
+    pb = push -u origin HEAD
+    sl = stash list
+    sa = stash apply
+    ss = stash save
+    sp = stash pop
+    graph = log --graph --date=relative --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    find = !git ls-files | grep -i
+    grep = grep -Ii
+    prune-local = !git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -D
+    root = rev-parse --show-toplevel
+    conflicts = diff --name-only --diff-filter=U
+    recent = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
+    stats = shortlog -sn --all --no-merges
+    contributors = shortlog -sn
+    uncommit = reset --soft HEAD^
+    recommit = commit --amend --no-edit
+    ignore = !gi() { curl -sL https://www.toptal.com/developers/gitignore/api/$@ ;}; gi
+    worktree-clean = !git worktree prune && git branch --format '%(if:notequals=1)%(if)%(worktreepath)%(then)%(refname:short)%(end)' | xargs -r git branch -d
+    sync = !git fetch --all --prune --tags && git pull --rebase --autostash
+    review = !git log origin/HEAD..HEAD --stat
+
+[branch]
+    autoSetupRebase = always
+    sort = -committerdate
+
+[help]
+    autocorrect = 1
+
+[log]
+    date = iso
+    follow = true
+
+[apply]
+    whitespace = fix
+
+[credential]
+    helper = osxkeychain
+    useHttpPath = true
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+[url "git@github.com:"]
+    insteadOf = gh:
+    pushInsteadOf = github:
+    pushInsteadOf = git://github.com/
+    insteadOf = https://github.com/
+
+[url "git@gitlab.com:"]
+    insteadOf = gl:
+    pushInsteadOf = gitlab:
+    pushInsteadOf = git://gitlab.com/
+
+[includeIf "gitdir:~/work/"]
+    path = ~/.gitconfig-work
+
+[transfer]
+    fsckObjects = true
+
+[blame]
+    markIgnoredLines = true
+    markUnblamableLines = true
+
+[gc]
+    auto = 256
+    autoDetach = false
+    writeCommitGraph = true
+
+[submodule]
+    fetchJobs = 4
+    recurse = true
+
+[pack]
+    threads = 0
+    useSparse = true
+
+[receive]
+    fsckObjects = true
+    advertisePushOptions = true
+
+[maintenance]
+    auto = false
+    strategy = incremental
+
+[maintenance "refs/heads/*"]
+    garbageCollection = true
+
+[maintenance "refs/tags/*"]
+    garbageCollection = false
+
+[multi-pack-index]
+    write = true
+
+[credential "https://github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+PY

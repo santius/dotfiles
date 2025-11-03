@@ -3,16 +3,16 @@
 # Disable strict mode temporarily for variable declarations
 set +u 2>/dev/null || true
 
-# ANSI color codes
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly BLUE='\033[0;34m'
-readonly PURPLE='\033[0;35m'
-readonly CYAN='\033[0;36m'
-readonly GRAY='\033[0;90m'
-readonly NC='\033[0m' # No Color
-readonly BOLD='\033[1m'
+# ANSI color codes (guarded so re-sourcing is safe)
+[[ -n "${RED-}" ]]    || readonly RED='\033[0;31m'
+[[ -n "${GREEN-}" ]]  || readonly GREEN='\033[0;32m'
+[[ -n "${YELLOW-}" ]] || readonly YELLOW='\033[1;33m'
+[[ -n "${BLUE-}" ]]   || readonly BLUE='\033[0;34m'
+[[ -n "${PURPLE-}" ]] || readonly PURPLE='\033[0;35m'
+[[ -n "${CYAN-}" ]]   || readonly CYAN='\033[0;36m'
+[[ -n "${GRAY-}" ]]   || readonly GRAY='\033[0;90m'
+[[ -n "${NC-}" ]]     || readonly NC='\033[0m' # No Color
+[[ -n "${BOLD-}" ]]   || readonly BOLD='\033[1m'
 
 # Initialize LOG_LEVEL first
 : "${LOG_LEVEL:=INFO}"

@@ -1,0 +1,172 @@
+# ---------------------------------------------------------------------
+# Homebrew Bundle
+# ---------------------------------------------------------------------
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "homebrew/services"
+
+# ---------------------------------------------------------------------
+# Core CLI & Shell
+# ---------------------------------------------------------------------
+brew "bash"
+brew "bash-completion"
+brew "eza"
+brew "fd"
+brew "findutils"
+brew "fzf"
+brew "git"
+brew "git-delta"
+brew "git-lfs"
+brew "gh"
+brew "gnu-sed"
+brew "gnu-tar"
+brew "gpg"
+brew "htop"
+brew "jq"
+brew "mas"
+brew "moreutils"
+brew "ripgrep"
+brew "rsync"
+brew "shellcheck"
+brew "starship"
+brew "thefuck"
+brew "tmux"
+brew "zoxide"
+brew "zsh"
+
+# ---------------------------------------------------------------------
+# Developer Toolchain
+# ---------------------------------------------------------------------
+brew "autoconf"
+brew "cmake"
+brew "ctags"
+brew "direnv"
+brew "go"
+brew "lua"
+brew "luarocks"
+brew "make"
+brew "node"
+brew "openjdk"
+brew "pinentry-mac"
+brew "pre-commit"
+brew "python"
+brew "pyenv"
+brew "redis", restart_service: true
+brew "rust"
+brew "sqlite"
+brew "yq"
+
+# ---------------------------------------------------------------------
+# Observability & Diagnostics
+# ---------------------------------------------------------------------
+brew "btop"
+brew "duf"
+brew "dust"
+brew "glances"
+brew "mtr"
+brew "neofetch"
+brew "procs"
+
+# ---------------------------------------------------------------------
+# Networking & Security
+# ---------------------------------------------------------------------
+brew "age"
+brew "croc"
+brew "curl"
+brew "lynx"
+brew "nmap"
+brew "openssl@3"
+brew "speedtest-cli"
+brew "ssh-copy-id"
+brew "wget"
+
+# ---------------------------------------------------------------------
+# Media, Fonts & Documents
+# ---------------------------------------------------------------------
+brew "asciidoc"
+brew "bat"
+brew "fontforge"
+brew "gifsicle"
+brew "imagemagick"
+brew "jpegoptim"
+brew "optipng"
+brew "pandoc"
+brew "tldr"
+brew "tree"
+brew "uni"
+brew "webp"
+
+# ---------------------------------------------------------------------
+# Productivity & Tasking
+# ---------------------------------------------------------------------
+brew "calcurse"
+brew "task"
+brew "timewarrior"
+
+# ---------------------------------------------------------------------
+# Cloud & Containers
+# ---------------------------------------------------------------------
+brew "awscli"
+brew "colima"
+brew "docker-compose"
+
+# ---------------------------------------------------------------------
+# Security Auditing
+# ---------------------------------------------------------------------
+brew "lynis"
+brew "ssh-audit"
+
+# ---------------------------------------------------------------------
+# Mac App Store
+# ---------------------------------------------------------------------
+mas "The Unarchiver", id: 425424353
+
+# ---------------------------------------------------------------------
+# GUI Applications (Casks)
+# ---------------------------------------------------------------------
+cask "alfred"
+cask "alt-tab"
+cask "arc"
+cask "arduino-ide"
+cask "autodesk-fusion"
+cask "bambu-studio"
+cask "canva"
+cask "cursor"
+cask "cyberduck"
+cask "discord"
+cask "docker"
+cask "dropbox"
+cask "firefox"
+cask "ghostty"
+cask "gimp"
+cask "github"
+cask "google-chrome"
+cask "home-assistant"
+cask "karabiner-elements"
+cask "microsoft-edge"
+cask "microsoft-excel"
+cask "microsoft-outlook"
+cask "microsoft-powerpoint"
+cask "microsoft-teams"
+cask "microsoft-word"
+cask "ollama"
+cask "rectangle"
+cask "rustdesk"
+cask "slack"
+cask "telegram"
+cask "visual-studio-code"
+cask "vlc"
+cask "whatsapp"
+cask "zap"
+
+# ---------------------------------------------------------------------
+# Fonts (Cask Fonts tap)
+# ---------------------------------------------------------------------
+cask "font-bad-script"
+cask "font-caskaydia-cove-nerd-font"
+cask "font-fira-mono-nerd-font"
+cask "font-go"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-lato"
+cask "font-victor-mono-nerd-font"

@@ -1,31 +1,50 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Path to oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM=~/zsh_custom
+
+[[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # Exit early for non-interactive shells to skip heavy setup
 [[ $- != *i* ]] && return
 
 # Theme setting
-ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Update settings
 zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 
 # History settings
+
+export HISTFILE="$HOME/.local/state/zsh/history"
+
+# In-memory and on-disk history sizes (match them)
 HISTSIZE=50000
-SAVEHIST=10000
-setopt EXTENDED_HISTORY      # Save timestamps in history
-setopt SHARE_HISTORY        # Share history between sessions
-setopt INC_APPEND_HISTORY   # Add commands to history as they are typed
-setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first
-setopt HIST_IGNORE_DUPS          # Don't record duplicates
-setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate
-setopt HIST_FIND_NO_DUPS         # Don't display duplicates during searches
-setopt HIST_IGNORE_SPACE         # Don't record entries starting with a space
-setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries
-setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
-setopt HIST_VERIFY              # Show command with history expansion before running it
+SAVEHIST=50000
+
+# Metadata + immediate append
+setopt EXTENDED_HISTORY       # timestamps etc.
+setopt INC_APPEND_HISTORY     # write each cmd as it runs
+setopt SHARE_HISTORY          # merge across sessions
+
+# De-dup & cleanliness (lightweight)
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_ALL_DUPS   # supersedes HIST_IGNORE_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+# Optional: comment out if you want max speed during search
+# setopt HIST_FIND_NO_DUPS
+
+# History expansion safety (harmless)
+setopt HIST_VERIFY
+
 
 # Directory navigation
 setopt AUTO_CD              # If command is a directory path, cd into it
@@ -44,31 +63,34 @@ setopt NO_BEEP            # Don't beep on ambiguous completions
 
 # Additional plugins to consider
 plugins=(
-    git
-    aliases
-    colored-man-pages
-    colorize
-    command-not-found
-    cp
-    history
-    rsync
-    safe-paste
-    web-search
-    autojump
-    docker
-    pip
-    python
-    pyenv
-    virtualenv
-    forklift
-    macos
-    battery
-    docker-compose
-    npm
-    brew
-    zsh-autosuggestions
-    zsh-syntax-highlighting
+  git
+  macos
+  brew
+  docker
+  docker-compose
+  npm
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
+
+# Completions: cached & no audits
+autoload -Uz compinit
+compinit -C -d ~/.cache/zsh/zcompdump
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.cache/zsh
+
+# Lazy pyenv
+lazy-pyenv() { command -v pyenv >/dev/null || return; eval "$(pyenv init -)"; }
+pyenv() { lazy-pyenv; command pyenv "$@"; }
+
+# Optional: lazy virtualenvwrapper only when used
+workon() { command -v virtualenvwrapper.sh >/dev/null || return; . "$(command -v virtualenvwrapper.sh)"; workon "$@"; }
+
+# Optional: zoxide instead of autojump (comment out autojump plugin if using this)
+if command -v zoxide >/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
 
 # Cache Homebrew paths once to avoid spawning the Ruby CLI during shell startup
 if (( $+commands[brew] )); then
