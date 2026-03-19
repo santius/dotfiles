@@ -44,7 +44,13 @@
     sort = version:refname
 
 [gpg]
+<<<<<<< Updated upstream
 	program = /opt/homebrew/bin/gpg
+||||||| Stash base
+    program = /opt/homebrew/bin/gpg
+=======
+	program = /usr/bin/gpg
+>>>>>>> Stashed changes
 
 [rerere]
     enabled = true
