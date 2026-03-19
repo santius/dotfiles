@@ -1,7 +1,7 @@
 [user]
     name = Santiago Hernandez
     email = santi84@gmail.com
-	signingkey = 84C2109A6A2FF523
+	signingkey = ~/.ssh/id_ed25519
     useconfigonly = true
 
 [github]
@@ -44,13 +44,7 @@
     sort = version:refname
 
 [gpg]
-<<<<<<< Updated upstream
-	program = /opt/homebrew/bin/gpg
-||||||| Stash base
-    program = /opt/homebrew/bin/gpg
-=======
-	program = /usr/bin/gpg
->>>>>>> Stashed changes
+	format = ssh
 
 [rerere]
     enabled = true
