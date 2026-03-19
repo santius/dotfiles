@@ -8,6 +8,9 @@
 " ----------------------------------------------------------------
 set nocompatible
 
+let s:has_nvim_0104 = has('nvim-0.10.4')
+let s:has_code_minimap = executable('code-minimap')
+
 " nvim-tree requires netrw disabled before plugin load.
 let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
@@ -41,13 +44,17 @@ Plug 'MeanderingProgrammer/render-markdown.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
+if s:has_nvim_0104
+  Plug 'nvim-telescope/telescope.nvim'
+endif
 Plug 'akinsho/toggleterm.nvim', { 'tag': '*' }
 
 " Git workflow
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog'
-Plug 'lewis6991/gitsigns.nvim'
+if s:has_nvim_0104
+  Plug 'lewis6991/gitsigns.nvim'
+endif
 
 " Tree and icons
 Plug 'nvim-tree/nvim-tree.lua'
@@ -57,7 +64,9 @@ Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " Optional code minimap
-Plug 'wfxr/minimap.vim'
+if s:has_code_minimap
+  Plug 'wfxr/minimap.vim'
+endif
 
 call plug#end()
 
@@ -483,7 +492,12 @@ nnoremap <silent> <leader>gff <cmd>Flog -- %<CR>
 
 " nvim-tree
 lua << EOF
-require('nvim-tree').setup({
+local ok, nvim_tree = pcall(require, 'nvim-tree')
+if not ok then
+  return
+end
+
+nvim_tree.setup({
   sort_by = 'case_sensitive',
   sync_root_with_cwd = true,
   respect_buf_cwd = true,

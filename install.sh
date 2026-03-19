@@ -78,12 +78,6 @@ main() {
         config_dotfiles "${ARGS[@]}" || log_warn "Warning: Dotfiles configuration failed"
     fi
 
-    # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
-    if [ -f "$BASE_DIR/scripts/configure_gpg_program.sh" ]; then
-                log_info "→ Setting git gpg.program..."
-                "$BASE_DIR/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
-    fi
-
     if [ "$OS" = "Darwin" ]; then
         if confirm "Do you want to install Homebrew?"; then
             log_info "→ Configuring Homebrew..."

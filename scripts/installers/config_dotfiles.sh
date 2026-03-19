@@ -198,18 +198,13 @@ config_dotfiles() {
         log_warn "Git message template not found at $GIT_DIR/message"
     fi
 
-    mkdir -p "$HOME/.gnupg"
-    if ! grep -qF "pinentry-program /opt/homebrew/bin/pinentry-mac" ~/.gnupg/gpg-agent.conf 2>/dev/null; then
-        echo "pinentry-program /opt/homebrew/bin/pinentry-mac" >> ~/.gnupg/gpg-agent.conf
-    fi
-
     #dotfiles_cleanup_old_backups "$backup_root"
 
     setup_config_dirs "$backup_dir"
     setup_ssh "$backup_dir"
     setup_bin_directory
 
-    if [[ -f "$BREW_DIR/Brewfile" ]]; then
+    if [[ "$(uname -s)" = "Darwin" ]] && [[ -f "$BREW_DIR/Brewfile" ]]; then
         log_section "BREWFILE"
         dotfiles_backup_item "$HOME/Brewfile" "$backup_dir"
         dotfiles_create_symlink "$BREW_DIR/Brewfile" "$HOME/Brewfile"
@@ -297,7 +292,14 @@ config_fonts() {
     log_section "FONTS"
 
     local source_dir="$BASE_DIR/assets/fonts"
-    local target_dir="/Library/Fonts"
+    local target_dir
+    if [[ "$(uname -s)" = "Darwin" ]]; then
+        target_dir="/Library/Fonts"
+    else
+        target_dir="$HOME/.local/share/fonts"
+    fi
+
+    mkdir -p "$target_dir"
 
     if [[ ! -d "$source_dir" ]]; then
         log_warn "Fonts directory not found at $source_dir, skipping font installation"
