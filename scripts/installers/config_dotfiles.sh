@@ -203,7 +203,7 @@ config_dotfiles() {
         echo "pinentry-program /opt/homebrew/bin/pinentry-mac" >> ~/.gnupg/gpg-agent.conf
     fi
 
-    dotfiles_cleanup_old_backups "$backup_root"
+    #dotfiles_cleanup_old_backups "$backup_root"
 
     setup_config_dirs "$backup_dir"
     setup_ssh "$backup_dir"

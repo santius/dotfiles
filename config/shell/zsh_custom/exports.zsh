@@ -12,6 +12,12 @@ _export_if_unset() {
 # Ensure secrets load first (keeps overrides intact).
 [[ -f "$HOME/.secrets" ]] && source "$HOME/.secrets"
 
+# Neutralize inherited globals that commonly break app runtimes.
+for _leaky_var in NODE_ENV NODE_TLS_REJECT_UNAUTHORIZED SSL_CERT_DIR MAKEFLAGS ARCHFLAGS LC_ALL; do
+    [[ -n "${(P)_leaky_var:-}" ]] && unset "$_leaky_var"
+done
+unset _leaky_var
+
 # --------------------------------------------------------------------------
 # Directories & Paths
 # --------------------------------------------------------------------------
@@ -37,7 +43,6 @@ _export_if_unset XDG_STATE_HOME "$HOME/.local/state"
 # --------------------------------------------------------------------------
 
 _export_if_unset LANG 'en_US.UTF-8'
-_export_if_unset LC_ALL 'en_US.UTF-8'
 _export_if_unset PYTHONIOENCODING 'UTF-8'
 
 _export_if_unset EDITOR 'nvim'
@@ -46,7 +51,6 @@ _export_if_unset PAGER 'less'
 _export_if_unset MANPAGER 'less -X'
 _export_if_unset LESS '-F -g -i -M -R -S -w -X -z-4'
 _export_if_unset LESSHISTFILE '-'
-_export_if_unset TERM 'xterm-256color'
 _export_if_unset CLICOLOR '1'
 
 _export_if_unset LSCOLORS 'ExFxBxDxCxegedabagacad'
@@ -75,7 +79,8 @@ fi
 # --------------------------------------------------------------------------
 
 ### Node.js
-_export_if_unset NODE_ENV 'development'
+# Avoid exporting NODE_ENV globally; set it per-project when starting apps.
+# Example: NODE_ENV=development npm run dev
 _export_if_unset NVM_DIR "$HOME/.nvm"
 
 load-nvm() {
@@ -134,17 +139,6 @@ else
     unset RIPGREP_CONFIG_PATH
 fi
 
-_export_if_unset ARCHFLAGS "-arch $(uname -m)"
-typeset _jobs
-if command -v nproc >/dev/null 2>&1; then
-    _jobs="$(nproc)"
-else
-    _jobs="$(sysctl -n hw.ncpu 2>/dev/null || echo 1)"
-fi
-_export_if_unset MAKEFLAGS "-j${_jobs}"
-unset _jobs
-
-_export_if_unset SSH_AUTH_SOCK "$HOME/.ssh/ssh-agent.sock"
 
 # --------------------------------------------------------------------------
 # Package managers
@@ -173,5 +167,3 @@ _export_if_unset ASDF_DATA_DIR "$HOME/.asdf"
 # --------------------------------------------------------------------------
 
 _export_if_unset CURL_SSL_VERIFY 'true'
-_export_if_unset NODE_TLS_REJECT_UNAUTHORIZED '1'
-_export_if_unset SSL_CERT_DIR '/etc/ssl/certs'

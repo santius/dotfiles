@@ -105,8 +105,16 @@ nnoremap <C-l> <C-w>l
 " Move lines up/down
 nnoremap <A-j> :m .+1<CR>==
 nnoremap <A-k> :m .-2<CR>==
+nnoremap <M-j> :m .+1<CR>==
+nnoremap <M-k> :m .-2<CR>==
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
+nnoremap <leader>j :m .+1<CR>==
+nnoremap <leader>k :m .-2<CR>==
+vnoremap <leader>j :m '>+1<CR>gv=gv
+vnoremap <leader>k :m '<-2<CR>gv=gv
 
 " Save with sudo
 command! W w !sudo tee % > /dev/null
@@ -114,7 +122,7 @@ command! W w !sudo tee % > /dev/null
 " Additional Key Mappings
 " Quick edit/source vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-noremap <leader>sv :source $MYVIMRC<cr>
+noremap <leader>sv :source $MY  C<cr>
 
 " Normal mode arrow mappings
 nnoremap <leader><Left> :vertical resize +2<CR>
@@ -161,7 +169,7 @@ function! ToggleBackground()
         set background=light
     else
         set background=dark
-    endif,t8
+    endif
 endfunction
 nnoremap <leader>bg :call ToggleBackground()<CR>
 
@@ -235,7 +243,17 @@ let g:ctrlp_custom_ignore={
 	\ }
 
 " Status line configuration
-set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)
+" Readable statusline: mode, file, flags, file info and cursor position
+set statusline=
+set statusline+=\ %{mode()}\ 
+set statusline+=%<%f
+set statusline+=%h%m%r
+set statusline+=%=
+set statusline+=\ [%{&filetype!=#''?&filetype:'noft'}]
+set statusline+=\ [%{&fileencoding!=#''?&fileencoding:&encoding}]
+set statusline+=\ [%{&fileformat}]
+set statusline+=\ [L:%l/%L\ C:%c]
+set statusline+=\ [%p%%]
 
 " ALE (Linting) settings
 if exists('g:loaded_ale')

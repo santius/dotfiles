@@ -1,7 +1,7 @@
 [user]
     name = Santiago Hernandez
     email = santi84@gmail.com
-    signingkey = 772B4DDD8099806A6C18431F0316EEF91303016C
+	signingkey = 84C2109A6A2FF523
     useconfigonly = true
 
 [github]
@@ -35,7 +35,7 @@
     diffFilter = delta --color-only
 
 [commit]
-    gpgSign = true
+	gpgsign = true
     template = ~/.config/git/message
     verbose = 1
 
@@ -44,7 +44,7 @@
     sort = version:refname
 
 [gpg]
-    program = /opt/homebrew/bin/gpg
+	program = /opt/homebrew/bin/gpg
 
 [rerere]
     enabled = true
