@@ -12,7 +12,9 @@ fi
 # Path to oh-my-zsh installation
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM=~/zsh_custom
-export AZURE_ARTIFACTS_TOKEN=REMOVED
+
+# Load machine-local secrets without tracking them in dotfiles.
+[[ -f "$HOME/.secrets" ]] && source "$HOME/.secrets"
 
 [[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
@@ -229,3 +231,4 @@ fi
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 fi
+export PATH="$HOME/.npm-global/bin:$PATH"
