@@ -35,11 +35,7 @@ if type brew &>/dev/null; then
 
     # Regenerate completions only if zsh is available
     if command -v zsh >/dev/null 2>&1; then
-        autoload -Uz compinit
-        compinit -C -d ~/.cache/zsh/zcompdump
-        zstyle ':completion:*' use-cache on
-        zstyle ':completion:*' cache-path ~/.cache/zsh
-
+        zsh -lc 'autoload -Uz compinit && compinit -C -d ~/.cache/zsh/zcompdump'
     else
         echo "Not running in zsh, skipping completion initialization"
     fi
@@ -62,7 +58,7 @@ plugin_urls=(
 echo "Installing required Homebrew packages..."
 packages=(autojump kubectl)
 for pkg in "${packages[@]}"; do
-    if brew list --formula | grep -q "^${pkg}$"; then
+    if ! brew list --formula | grep -q "^${pkg}$"; then
         brew install "$pkg"
     fi
 done
