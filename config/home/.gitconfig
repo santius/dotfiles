@@ -1,7 +1,6 @@
 [user]
     name = Santiago Hernandez
     email = santi84@gmail.com
-	signingkey = ~/.ssh/id_ed25519
     useconfigonly = true
 
 [github]
@@ -35,16 +34,11 @@
     diffFilter = delta --color-only
 
 [commit]
-	gpgsign = true
     template = ~/.config/git/message
     verbose = 1
 
 [tag]
-    gpgsign = true
     sort = version:refname
-
-[gpg]
-	format = ssh
 
 [rerere]
     enabled = true
@@ -201,6 +195,9 @@
 
 [includeIf "gitdir:~/work/"]
     path = ~/.gitconfig-work
+
+[include]
+    path = ~/.gitconfig-local
 
 [transfer]
     fsckObjects = true

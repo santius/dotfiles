@@ -24,7 +24,7 @@ export ZSH_CUSTOM_DIR="$HOME/zsh_custom"
 
 # Source dependencies
 # shellcheck disable=SC1091
-source "$BASE_DIR/scripts/lib/logger.sh"
+source "$BASE_DIR/scripts/shared/logger.sh"
 # shellcheck disable=SC1091
 source "$BASE_DIR/scripts/installers/config_dotfiles.sh"
 # shellcheck disable=SC1091

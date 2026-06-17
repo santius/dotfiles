@@ -2,9 +2,9 @@
 
 # Make the script standalone: source the repo logger if available
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-if [ -f "$SCRIPT_DIR/lib/logger.sh" ]; then
+if [ -f "$SCRIPT_DIR/shared/logger.sh" ]; then
     # shellcheck source=/dev/null
-    source "$SCRIPT_DIR/lib/logger.sh"
+    source "$SCRIPT_DIR/shared/logger.sh"
 fi
 
 echo "Installing Oh My Zsh plugins..."

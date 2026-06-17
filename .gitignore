@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Editor/runtime logs
+*.log
+
+# Local temporary files
+*.tmp
+*.swp
+*.swo

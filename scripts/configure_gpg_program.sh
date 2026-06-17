@@ -13,7 +13,7 @@ BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 
 # Source dependencies
 # shellcheck disable=SC1091
-source "$BASE_DIR/scripts/lib/logger.sh"
+source "$BASE_DIR/scripts/shared/logger.sh"
 
 APPLY=false
 for arg in "$@"; do

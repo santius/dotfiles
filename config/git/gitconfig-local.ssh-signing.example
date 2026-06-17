@@ -1,0 +1,17 @@
+# Copy this to ~/.gitconfig-local on machines with Git SSH signing support.
+#
+# Requires Git with SSH signing support. If Git reports:
+#   unsupported value for gpg.format: ssh
+# do not enable this file on that machine.
+
+[user]
+    signingkey = ~/.ssh/id_ed25519
+
+[commit]
+    gpgsign = true
+
+[tag]
+    gpgsign = true
+
+[gpg]
+    format = ssh

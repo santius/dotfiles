@@ -52,7 +52,7 @@ Personal macOS/Linux Mint bootstrap and dotfile collection for terminal-first de
 | `config/git/` | Git extras (e.g. commit templates) |
 | `scripts/defaults/` | OS-specific defaults implementations |
 | `scripts/installers/` | Shared bash helpers used by the installer |
-| `scripts/lib/` | Shared shell libraries such as logging |
+| `scripts/shared/` | Shared shell libraries such as logging |
 | `scripts/` | Support scripts run during install (e.g. plugin bootstrap) |
 | `assets/fonts/` | Fonts copied when installing with `--fonts` |
 | `assets/keyboards/` | Keyboard layout exports and hardware-related assets |
