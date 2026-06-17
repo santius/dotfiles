@@ -32,10 +32,28 @@ alias vi=nvim
 alias wget='wget -c'
 alias df='df -H'
 alias du='dust'
-alias cat="batcat"
+alias cat="bat"
 alias ping='ping -c 5'    # Ping with 5 packets by default
 alias ports='ss -tulanp'  # Keep modern version
 alias path='echo -e ${PATH//:/\\n}'
+
+helpbat() {
+    local help_flag="--help"
+    local pager=(cat)
+    
+    if [[ $1 == "-h" || $1 == "--help" ]]; then
+        help_flag="$1"
+        shift
+    fi
+    
+    if command -v bat >/dev/null 2>&1; then
+        pager=(bat --language=help --style=plain)
+        elif command -v batcat >/dev/null 2>&1; then
+        pager=(batcat --language=help --style=plain)
+    fi
+    
+    "$@" "$help_flag" 2>&1 | "${pager[@]}"
+}
 
 # Config editing
 alias aliases="nvim $ZSH_CUSTOM/aliases.zsh"

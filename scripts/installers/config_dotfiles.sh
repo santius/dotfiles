@@ -24,8 +24,17 @@ dotfiles_backup_item() {
     mkdir -p "$backup_dir"
 
     if [[ ! -L "$path" ]]; then
-        log_info "Backing up $path -> $backup_dir"
-        cp -a "$path" "$backup_dir"/
+        local backup_path
+        if [[ "$path" == "$HOME"/* ]]; then
+            backup_path="$backup_dir/${path#"$HOME"/}"
+        else
+            backup_path="$backup_dir/$(basename "$path")"
+        fi
+
+        mkdir -p "$(dirname "$backup_path")"
+        rm -rf "$backup_path"
+        log_info "Backing up $path -> $backup_path"
+        cp -a "$path" "$backup_path"
     else
         log_info "Skipping backup for symlink $path"
     fi
@@ -54,7 +63,12 @@ dotfiles_cleanup_old_backups() {
 
     [[ -d "$backup_root" ]] || return 0
 
-    mapfile -t backups < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
+    local backups=()
+    local backup
+    while IFS= read -r backup; do
+        backups+=("$backup")
+    done < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
+
     if (( ${#backups[@]} > keep )); then
         for old in "${backups[@]:keep}"; do
             rm -rf "$old"
@@ -98,8 +112,8 @@ execute_scripts() {
         local script_name
         script_name="$(basename "$script")"
         case "$script_name" in
-            install_vim_plugins.sh|install_vim_themes.sh)
-                log_info "Skipping legacy Vim helper: $script_name (Neovim handles plugins now)"
+            configure_gpg_program.sh)
+                log_info "Skipping manual helper: $script_name"
                 continue
                 ;;
         esac
@@ -152,7 +166,7 @@ config_dotfiles() {
             [[ -e "$entry" || -L "$entry" ]] || continue
             name="$(basename "$entry")"
             case "$name" in
-                .|..|.git|.DS_Store) continue ;;
+                .|..|.git|.DS_Store|.config|.ssh|.gitconfig|.gitignore_global) continue ;;
             esac
             dotfiles_create_symlink "$entry" "$HOME/$name"
         done
@@ -198,8 +212,6 @@ config_dotfiles() {
         log_warn "Git message template not found at $GIT_DIR/message"
     fi
 
-    #dotfiles_cleanup_old_backups "$backup_root"
-
     setup_config_dirs "$backup_dir"
     setup_ssh "$backup_dir"
     setup_bin_directory
@@ -218,6 +230,8 @@ config_dotfiles() {
     fi
 
     config_themes
+
+    dotfiles_cleanup_old_backups "$backup_root"
 
     log_success "Dotfiles configuration completed successfully"
 }
@@ -240,7 +254,8 @@ config_nvim() {
     local nvim_plug_file="$nvim_data_dir/site/autoload/plug.vim"
 
     if [[ -d "$nvim_config_dir" || -L "$nvim_config_dir" ]]; then
-        local backup_target="$nvim_config_dir.backup.$(date +%Y%m%d_%H%M%S)"
+        local backup_target
+        backup_target="$nvim_config_dir.backup.$(date +%Y%m%d_%H%M%S)"
         log_info "Backing up existing Neovim configuration to $backup_target"
         mv "$nvim_config_dir" "$backup_target"
     fi
@@ -340,6 +355,10 @@ setup_ssh() {
     local backup_dir="$1"
     log_section "SSH"
 
+    if [[ -L "$HOME/.ssh" ]]; then
+        dotfiles_backup_item "$HOME/.ssh" "$backup_dir"
+    fi
+
     mkdir -p "$HOME/.ssh"
     chmod 700 "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
@@ -359,14 +378,13 @@ setup_config_dirs() {
     local backup_dir="$1"
     log_section ".config CONFIGURATION"
 
+    if [[ -L "$HOME/.config" ]]; then
+        dotfiles_backup_item "$HOME/.config" "$backup_dir"
+    fi
     mkdir -p "$HOME/.config"
 
     local config_dirs=(
-        git
-        nvim
-        starship
         kitty
-        bat
         htop
     )
 
@@ -379,16 +397,32 @@ setup_config_dirs() {
     done
 
     local config_files=(
-        starship.toml
         bat/config
+        btop/btop.conf
+        karabiner/karabiner.json
+        neofetch/config.conf
     )
 
     local file
     for file in "${config_files[@]}"; do
-        if [[ -f "$DOTS_DIR/.config/$file" ]]; then
-            dotfiles_backup_item "$HOME/.config/$file" "$backup_dir"
-            dotfiles_create_symlink "$DOTS_DIR/.config/$file" "$HOME/.config/$file"
+        local source="$DOTS_DIR/.config/$file"
+        local target="$HOME/.config/$file"
+        local target_parent
+        target_parent="$(dirname "$target")"
+
+        if [[ -L "$target_parent" ]]; then
+            dotfiles_backup_item "$target_parent" "$backup_dir"
+            mkdir -p "$target_parent"
         fi
+
+        if [[ ! -f "$source" ]]; then
+            mkdir -p "$(dirname "$source")"
+            : > "$source"
+            log_info "Created missing config file: $source"
+        fi
+
+        dotfiles_backup_item "$target" "$backup_dir"
+        dotfiles_create_symlink "$source" "$target"
     done
 }
 

@@ -1,0 +1,15 @@
+# Set the theme to "TwoDark"
+--theme="TwoDark"
+
+# Show chanegs
+--style="changes"
+
+# Use italic text on the terminal (not supported on all terminals)
+--italic-text=always
+
+# Use C++ syntax for Arduino .ino files
+--map-syntax "*.ino:C++"
+
+--paging=auto
+
+--wrap=never

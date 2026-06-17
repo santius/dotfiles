@@ -1,17 +1,10 @@
 #!/bin/bash
 
-# Source dependencies once if available
-if [[ -z "${_DOTFILES_LOGGER_SOURCED:-}" ]]; then
-    _DOTFILES_LOGGER_SOURCED=1
-    source logger.sh 2>/dev/null || true
-fi
-
 # Make the script standalone: source the repo logger if available
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-if [ -f "$SCRIPT_DIR/../logger.sh" ] && [[ -z "${_DOTFILES_LOGGER_SOURCED_INC:-}" ]]; then
-    _DOTFILES_LOGGER_SOURCED_INC=1
+if [ -f "$SCRIPT_DIR/lib/logger.sh" ]; then
     # shellcheck source=/dev/null
-    source "$SCRIPT_DIR/../logger.sh"
+    source "$SCRIPT_DIR/lib/logger.sh"
 fi
 
 echo "Installing Oh My Zsh plugins..."
@@ -42,7 +35,7 @@ if type brew &>/dev/null; then
 fi
 
 # Create plugins directory
-mkdir -p ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins
+mkdir -p "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
 
 # Define plugins to install (avoid associative arrays for macOS bash 3.x)
 plugin_names=(

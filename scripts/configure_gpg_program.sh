@@ -6,29 +6,53 @@
 #   ./configure_gpg_program.sh --apply # actually sets git config --global gpg.program
 #   ./configure_gpg_program.sh --yes   # same as --apply
 
-# Source dependencies
-source logger.sh
-log_section "GPG"
-
 set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+
+# Source dependencies
+# shellcheck disable=SC1091
+source "$BASE_DIR/scripts/lib/logger.sh"
 
 APPLY=false
 for arg in "$@"; do
   case "$arg" in
-    --apply|--yes) APPLY=true; shift ;;
+    --apply|--yes) APPLY=true ;;
     -h|--help)
       sed -n '1,120p' "$0"
       exit 0
       ;;
+    *)
+      log_error "Unknown argument: $arg"
+      exit 1
+      ;;
   esac
 done
+
+log_section "GPG"
+
+if ! command -v git >/dev/null 2>&1; then
+  log_error "git is required to configure gpg.program"
+  exit 1
+fi
 
 candidates=("$(command -v gpg 2>/dev/null || true)" "$(command -v gpg2 2>/dev/null || true)" "/opt/homebrew/bin/gpg" "/usr/local/bin/gpg")
 # unique & non-empty
 unique=()
 for p in "${candidates[@]}"; do
-  if [ -n "$p" ] && [ ! "${unique[*]}" = *"$p"* ]; then
-    unique+=("$p")
+  [[ -n "$p" ]] || continue
+
+  found=false
+  for existing in "${unique[@]}"; do
+    if [[ "$existing" == "$p" ]]; then
+      found=true
+      break
+    fi
+  done
+
+  if [[ "$found" == false ]]; then
+      unique+=("$p")
   fi
 done
 

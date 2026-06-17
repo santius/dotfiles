@@ -14,6 +14,8 @@ add_to_path "/opt/homebrew/bin"
 add_to_path "/opt/homebrew/sbin"
 add_to_path "/usr/local/bin"
 add_to_path "/usr/local/sbin"
+add_to_path "/home/linuxbrew/.linuxbrew/bin"
+add_to_path "/home/linuxbrew/.linuxbrew/sbin"
 
 # User specific paths
 add_to_path "$HOME/.local/bin"
@@ -35,10 +37,16 @@ add_to_path "$HOME/bin"
 
 # Node paths
 add_to_path "$HOME/.npm-global/bin"
-add_to_path "$HOME/.nvm/versions/node/*/bin"
+for node_bin in "$HOME"/.nvm/versions/node/*/bin(N-/); do
+    add_to_path "$node_bin"
+done
+unset node_bin
 
 # Cargo (Rust) path
 add_to_path "$HOME/.cargo/bin"
+
+# Android SDK
+add_to_path "$HOME/Library/Android/sdk/platform-tools"
 
 # Remove duplicate entries
 typeset -U PATH

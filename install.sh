@@ -11,12 +11,8 @@ while [ $# -gt 0 ]; do
   esac; shift
 done
 
-# forward the flag only if present
-ARGS=()
-$FONTS && ARGS+=(--fonts)
-# Base directory paths
-
-export BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+export BASE_DIR
 export DOTS_DIR="$BASE_DIR/config/home"
 export ZSH_DIR="$BASE_DIR/config/shell/zsh_custom"
 export GIT_DIR="$BASE_DIR/config/git"
@@ -27,10 +23,14 @@ export BACKUP_DIR="$HOME/.dotfiles_backup"
 export ZSH_CUSTOM_DIR="$HOME/zsh_custom"
 
 # Source dependencies
-source logger.sh
-source "scripts/installers/config_dotfiles.sh"
-source "scripts/installers/config_homebrew.sh"
-source "scripts/installers/config_mac_defaults.sh"
+# shellcheck disable=SC1091
+source "$BASE_DIR/scripts/lib/logger.sh"
+# shellcheck disable=SC1091
+source "$BASE_DIR/scripts/installers/config_dotfiles.sh"
+# shellcheck disable=SC1091
+source "$BASE_DIR/scripts/installers/config_homebrew.sh"
+# shellcheck disable=SC1091
+source "$BASE_DIR/scripts/installers/config_os_defaults.sh"
 
 # Check for required dependencies
 for cmd in git curl; do
@@ -41,6 +41,7 @@ for cmd in git curl; do
 done
 
 # Files to backup
+# shellcheck disable=SC2034 # consumed by config_dotfiles.sh after sourcing
 FILES_TO_BACKUP=(
     "$HOME/.zshrc"
     "$HOME/.zprofile"
@@ -49,7 +50,6 @@ FILES_TO_BACKUP=(
     "$HOME/Brewfile"
     "$HOME/.ssh/config"
     "$HOME/.config/git/message"
-    "$HOME/.config/starship.toml"
     "$HOME/.config/bat/config"
 )
 
@@ -58,7 +58,7 @@ confirm() {
     local prompt="$1 (yes/no): "
     local response
     while true; do
-        read -p "$prompt" response
+        read -r -p "$prompt" response
         case "$response" in
             [yY]|[yY][eE][sS]) return 0 ;;
             [nN]|[nN][oO]) return 1 ;;
@@ -75,7 +75,11 @@ main() {
 
     if confirm "Do you want to install Dotfiles?"; then
         log_info "→ Configuring dotfiles..."
-        config_dotfiles "${ARGS[@]}" || log_warn "Warning: Dotfiles configuration failed"
+        if $FONTS; then
+            config_dotfiles --fonts || log_warn "Warning: Dotfiles configuration failed"
+        else
+            config_dotfiles || log_warn "Warning: Dotfiles configuration failed"
+        fi
     fi
 
     if [ "$OS" = "Darwin" ]; then
@@ -83,18 +87,21 @@ main() {
             log_info "→ Configuring Homebrew..."
             config_homebrew || log_warn "Warning: Homebrew configuration failed"
         fi
+    fi
 
-        if confirm "Do you want to config MacOS defaults?"; then
-            if confirm "Do you want to change hostname?"; then
-                read -p "Enter desired hostname: " hostname
-                if [[ -n "$hostname" ]]; then
-                    log_info "→ Configuring macOS defaults..."
-                    config_macos_defaults "$hostname" || log_warn "Warning: macOS defaults configuration failed"
-                else
-                    log_error "Error: Hostname cannot be empty"
+    if [[ "$OS" = "Darwin" || "$OS" = "Linux" ]]; then
+        if confirm "Do you want to configure OS defaults?"; then
+            local hostname=""
+            if confirm "Do you want to set or change hostname?"; then
+                read -r -p "Enter desired hostname: " hostname
+                if [[ -z "$hostname" ]]; then
+                    log_error "Error: Hostname cannot be empty when hostname change is selected"
                     return 1
                 fi
             fi
+
+            log_info "→ Configuring OS defaults..."
+            config_os_defaults "$hostname" || log_warn "Warning: OS defaults configuration failed"
         fi
     fi
 

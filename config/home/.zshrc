@@ -10,11 +10,14 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Path to oh-my-zsh installation
-export ZSH="$HOME/.oh-my-zsh"
-export ZSH_CUSTOM=~/zsh_custom
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+export ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/zsh_custom}"
 
-# Load machine-local secrets without tracking them in dotfiles.
-[[ -f "$HOME/.secrets" ]] && source "$HOME/.secrets"
+if [[ -z "${DOTFILES_ENV_LOADED:-}" ]]; then
+  [[ -r "$ZSH_CUSTOM/path.zsh" ]] && source "$ZSH_CUSTOM/path.zsh"
+  [[ -r "$ZSH_CUSTOM/exports.zsh" ]] && source "$ZSH_CUSTOM/exports.zsh"
+  export DOTFILES_ENV_LOADED=1
+fi
 
 [[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
@@ -80,9 +83,6 @@ plugins=(
 #  zsh-syntax-highlighting
 )
 
-# Completions: cached & no audits
-autoload -Uz compinit
-compinit -C -d ~/.cache/zsh/zcompdump
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.cache/zsh
 
@@ -97,12 +97,6 @@ fi
 
 # Optional: lazy virtualenvwrapper only when used
 workon() { command -v virtualenvwrapper.sh >/dev/null || return; . "$(command -v virtualenvwrapper.sh)"; workon "$@"; }
-
-# Optional: zoxide instead of autojump (comment out autojump plugin if using this)
-if command -v zoxide >/dev/null; then
-  eval "$(zoxide init zsh)"
-fi
-
 
 # Cache Homebrew paths once to avoid spawning the Ruby CLI during shell startup
 if (( $+commands[brew] )); then
@@ -161,6 +155,9 @@ source $ZSH/oh-my-zsh.sh
 
 # Source all custom configurations
 for config_file ($ZSH_CUSTOM/*.zsh(N)); do
+  case "${config_file:t}" in
+    exports.zsh|path.zsh) continue ;;
+  esac
   source $config_file
 done
 
@@ -220,15 +217,6 @@ if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
     _sdkman_auto_env_lazy
 fi
 
-if [[ -d "$HOME/Library/Android/sdk/platform-tools" ]]; then
-  export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-fi
-
 if [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]]; then
   builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
 fi
-
-if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-fi
-export PATH="$HOME/.npm-global/bin:$PATH"

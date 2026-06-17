@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-exec "$SCRIPT_DIR/scripts/defaults/macos.sh" "$@"
+exec "$SCRIPT_DIR/scripts/defaults/linux-mint.sh" "$@"
