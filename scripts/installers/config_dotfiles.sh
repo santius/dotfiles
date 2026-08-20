@@ -93,16 +93,6 @@ dotfiles_cleanup_old_backups() {
 
     [[ -d "$backup_root" ]] || return 0
 
-<<<<<<< Updated upstream
-    local backups=()
-    local backup
-    while IFS= read -r backup; do
-        backups+=("$backup")
-    done < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
-
-||||||| Stash base
-    mapfile -t backups < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
-=======
     local -a backups=()
 
     while IFS= read -r backup_path; do
@@ -110,7 +100,6 @@ dotfiles_cleanup_old_backups() {
         backups+=("$backup_path")
     done < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
 
->>>>>>> Stashed changes
     if (( ${#backups[@]} > keep )); then
         local idx
         for ((idx = keep; idx < ${#backups[@]}; idx++)); do
