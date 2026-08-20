@@ -72,25 +72,23 @@ For a new app config that should live at `~/.config/pepito/config`, add the sour
 config/home/.config/pepito/config
 ```
 
-Then add the relative path to `config_files` in `scripts/installers/config_dotfiles.sh`:
-
-```bash
-local config_files=(
-    bat/config
-    btop/btop.conf
-    karabiner/karabiner.json
-    neofetch/config.conf
-    pepito/config
-)
-```
-
-On the next `./install.sh`, the installer creates the source file if missing and links:
+On the next `./install.sh`, the installer discovers it automatically and links:
 
 ```text
 ~/.config/pepito/config -> config/home/.config/pepito/config
 ```
 
-If an app should be managed as a whole directory instead of individual files, add its directory name to `config_dirs` instead.
+If `~/.config/pepito` does not already exist, the installer links the whole directory. If it already exists, the installer links the entries inside it so unrelated app-created files can remain in place.
+
+### Adding other home config paths
+
+For app configs outside `~/.config`, mirror the home-relative path under `config/home/`. For example, Ghostty's macOS config at `~/Library/Application Support/com.mitchellh.ghostty/config` should live at:
+
+```text
+config/home/Library/Application Support/com.mitchellh.ghostty/config
+```
+
+On macOS, `./install.sh` links that file automatically. Existing real directories such as `~/Library` and `~/Library/Application Support` are kept in place, and only the managed entries below them are symlinked.
 
 ## Maintenance
 

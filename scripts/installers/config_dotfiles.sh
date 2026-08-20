@@ -57,6 +57,36 @@ dotfiles_create_symlink() {
     log_info "Linked $target -> $source"
 }
 
+dotfiles_link_tree() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local backup_dir="$3"
+
+    if [[ ! -d "$source_dir" ]]; then
+        log_warn "Source directory not found, skipping tree symlinks: $source_dir"
+        return 0
+    fi
+
+    mkdir -p "$target_dir"
+
+    local entry name target
+    for entry in "$source_dir"/* "$source_dir"/.*; do
+        [[ -e "$entry" || -L "$entry" ]] || continue
+        name="$(basename "$entry")"
+        case "$name" in
+            .|..|.DS_Store) continue ;;
+        esac
+
+        target="$target_dir/$name"
+        if [[ -d "$entry" && ! -L "$entry" && -d "$target" && ! -L "$target" ]]; then
+            dotfiles_link_tree "$entry" "$target" "$backup_dir"
+        else
+            dotfiles_backup_item "$target" "$backup_dir"
+            dotfiles_create_symlink "$entry" "$target"
+        fi
+    done
+}
+
 dotfiles_cleanup_old_backups() {
     local backup_root="$1"
     local keep="${2:-5}"
@@ -129,6 +159,37 @@ execute_scripts() {
     fi
 }
 
+setup_home_tree_links() {
+    local backup_dir="$1"
+    log_section "HOME DIRECTORY TREE SYMLINKS"
+
+    if [[ ! -d "$DOTS_DIR" ]]; then
+        log_warn "Dots directory not found: $DOTS_DIR"
+        return 0
+    fi
+
+    local entry name
+    for entry in "$DOTS_DIR"/*; do
+        [[ -e "$entry" || -L "$entry" ]] || continue
+        name="$(basename "$entry")"
+        case "$name" in
+            Library)
+                if [[ "$(uname -s)" != "Darwin" ]]; then
+                    log_info "Skipping macOS-only home path on non-macOS host: $name"
+                    continue
+                fi
+                ;;
+        esac
+
+        if [[ -d "$entry" && ! -L "$entry" && -d "$HOME/$name" && ! -L "$HOME/$name" ]]; then
+            dotfiles_link_tree "$entry" "$HOME/$name" "$backup_dir"
+        else
+            dotfiles_backup_item "$HOME/$name" "$backup_dir"
+            dotfiles_create_symlink "$entry" "$HOME/$name"
+        fi
+    done
+}
+
 config_dotfiles() {
     local install_fonts=false
     while (($# > 0)); do
@@ -173,6 +234,8 @@ config_dotfiles() {
     else
         log_warn "Dots directory not found: $DOTS_DIR"
     fi
+
+    setup_home_tree_links "$backup_dir"
 
     log_section "CREATING ZSH SYMLINKS"
     if [[ -d "$ZSH_DIR" ]]; then
@@ -383,47 +446,13 @@ setup_config_dirs() {
     fi
     mkdir -p "$HOME/.config"
 
-    local config_dirs=(
-        kitty
-        htop
-    )
+    local source_config_dir="$DOTS_DIR/.config"
+    if [[ ! -d "$source_config_dir" ]]; then
+        log_warn "No .config directory found at $source_config_dir; skipping .config symlinks"
+        return 0
+    fi
 
-    local dir
-    for dir in "${config_dirs[@]}"; do
-        if [[ -d "$DOTS_DIR/.config/$dir" ]]; then
-            dotfiles_backup_item "$HOME/.config/$dir" "$backup_dir"
-            dotfiles_create_symlink "$DOTS_DIR/.config/$dir" "$HOME/.config/$dir"
-        fi
-    done
-
-    local config_files=(
-        bat/config
-        btop/btop.conf
-        karabiner/karabiner.json
-        neofetch/config.conf
-    )
-
-    local file
-    for file in "${config_files[@]}"; do
-        local source="$DOTS_DIR/.config/$file"
-        local target="$HOME/.config/$file"
-        local target_parent
-        target_parent="$(dirname "$target")"
-
-        if [[ -L "$target_parent" ]]; then
-            dotfiles_backup_item "$target_parent" "$backup_dir"
-            mkdir -p "$target_parent"
-        fi
-
-        if [[ ! -f "$source" ]]; then
-            mkdir -p "$(dirname "$source")"
-            : > "$source"
-            log_info "Created missing config file: $source"
-        fi
-
-        dotfiles_backup_item "$target" "$backup_dir"
-        dotfiles_create_symlink "$source" "$target"
-    done
+    dotfiles_link_tree "$source_config_dir" "$HOME/.config" "$backup_dir"
 }
 
 setup_bin_directory() {
