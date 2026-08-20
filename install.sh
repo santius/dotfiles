@@ -11,8 +11,29 @@ while [ $# -gt 0 ]; do
   esac; shift
 done
 
+<<<<<<< Updated upstream
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 export BASE_DIR
+||||||| Stash base
+# forward the flag only if present
+ARGS=()
+$FONTS && ARGS+=(--fonts)
+# Base directory paths
+
+export BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+=======
+# forward the flag only if present
+ARGS=()
+if $FONTS; then
+  ARGS+=(--fonts)
+  export DOTFILES_INSTALL_FONTS=true
+else
+  export DOTFILES_INSTALL_FONTS=false
+fi
+# Base directory paths
+
+export BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+>>>>>>> Stashed changes
 export DOTS_DIR="$BASE_DIR/config/home"
 export ZSH_DIR="$BASE_DIR/config/shell/zsh_custom"
 export GIT_DIR="$BASE_DIR/config/git"
@@ -75,11 +96,33 @@ main() {
 
     if confirm "Do you want to install Dotfiles?"; then
         log_info "→ Configuring dotfiles..."
+<<<<<<< Updated upstream
         if $FONTS; then
             config_dotfiles --fonts || log_warn "Warning: Dotfiles configuration failed"
         else
             config_dotfiles || log_warn "Warning: Dotfiles configuration failed"
         fi
+||||||| Stash base
+        config_dotfiles "${ARGS[@]}" || log_warn "Warning: Dotfiles configuration failed"
+    fi
+
+    # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
+    if [ -f "$BASE_DIR/scripts/configure_gpg_program.sh" ]; then
+                log_info "→ Setting git gpg.program..."
+                "$BASE_DIR/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
+=======
+        if (( ${#ARGS[@]} )); then
+            config_dotfiles "${ARGS[@]}" || log_warn "Warning: Dotfiles configuration failed"
+        else
+            config_dotfiles || log_warn "Warning: Dotfiles configuration failed"
+        fi
+    fi
+
+    # Configure GPG program for Git (helps avoid 'cannot run gpg' errors)
+    if [ -f "$BASE_DIR/scripts/configure_gpg_program.sh" ]; then
+                log_info "→ Setting git gpg.program..."
+                "$BASE_DIR/scripts/configure_gpg_program.sh" --apply || echo "Warning: failed to set gpg.program"
+>>>>>>> Stashed changes
     fi
 
     if [ "$OS" = "Darwin" ]; then

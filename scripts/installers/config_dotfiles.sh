@@ -93,16 +93,29 @@ dotfiles_cleanup_old_backups() {
 
     [[ -d "$backup_root" ]] || return 0
 
+<<<<<<< Updated upstream
     local backups=()
     local backup
     while IFS= read -r backup; do
         backups+=("$backup")
     done < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
 
+||||||| Stash base
+    mapfile -t backups < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
+=======
+    local -a backups=()
+
+    while IFS= read -r backup_path; do
+        [[ -n "$backup_path" ]] || continue
+        backups+=("$backup_path")
+    done < <(ls -1dt "$backup_root"/backup_* 2>/dev/null || true)
+
+>>>>>>> Stashed changes
     if (( ${#backups[@]} > keep )); then
-        for old in "${backups[@]:keep}"; do
-            rm -rf "$old"
-            log_info "Removed old backup: $old"
+        local idx
+        for ((idx = keep; idx < ${#backups[@]}; idx++)); do
+            rm -rf "${backups[idx]}"
+            log_info "Removed old backup: ${backups[idx]}"
         done
     fi
 }
@@ -191,7 +204,14 @@ setup_home_tree_links() {
 }
 
 config_dotfiles() {
-    local install_fonts=false
+    local install_fonts_default="${DOTFILES_INSTALL_FONTS:-false}"
+    local install_fonts
+
+    case "$install_fonts_default" in
+        [Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|[Yy]|1) install_fonts=true ;;
+        *) install_fonts=false ;;
+    esac
+
     while (($# > 0)); do
         case "$1" in
             --fonts) install_fonts=true ;;
