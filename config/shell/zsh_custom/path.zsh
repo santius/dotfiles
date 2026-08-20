@@ -46,7 +46,12 @@ unset node_bin
 add_to_path "$HOME/.cargo/bin"
 
 # Android SDK
-add_to_path "$HOME/Library/Android/sdk/platform-tools"
+add_to_path "$ANDROID_HOME/platform-tools"
+add_to_path "$ANDROID_HOME/emulator"
+add_to_path "$ANDROID_HOME/cmdline-tools/latest/bin"
+
+#Coda
+add_to_path "~/.coda/bin/coda"
 
 # Remove duplicate entries
 typeset -U PATH

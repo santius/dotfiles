@@ -72,7 +72,7 @@
     updateRefs = true
 
 [merge]
-    conflictStyle = zdiff3
+    conflictStyle = diff3
     ff = only
     tool = nvimdiff
     stat = true

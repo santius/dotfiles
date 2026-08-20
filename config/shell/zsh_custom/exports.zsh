@@ -75,6 +75,12 @@ if [[ -t 0 ]]; then
 fi
 
 # --------------------------------------------------------------------------
+# Mobile tools Android and iOS
+# --------------------------------------------------------------------------
+
+_export_if_unset ANDROID_HOME "$HOME/Library/Android/sdk"
+
+# --------------------------------------------------------------------------
 # Development runtimes
 # --------------------------------------------------------------------------
 
@@ -128,8 +134,11 @@ _export_if_unset COMPOSE_DOCKER_CLI_BUILD '1'
 # Tooling defaults
 # --------------------------------------------------------------------------
 
+# Use fd instead of fzf
 if command -v fd >/dev/null 2>&1; then
-    _export_if_unset FZF_DEFAULT_COMMAND 'fd --type f --hidden --follow --exclude .git'
+    _export_if_unset FZF_DEFAULT_COMMAND 'fd --hidden --strip-cwd-prefix --exclude .git'
+    _export_if_unset FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
+    _export_if_unset FZF_ALT_C_COMMAND 'fd --type=d --hidden --strip-cwd-prefix --exclude .git'
 fi
 _export_if_unset FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border --info=inline'
 

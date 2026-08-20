@@ -1,0 +1,68 @@
+# --- Look & feel
+
+font-family = Hack Nerd Font Mono
+font-size = 16.5
+window-padding-x = 15
+window-padding-y = 15
+window-padding-balance = true
+theme = Catppuccin Mocha
+background-image = ~/Pictures/terminal_logo_3_small.png
+background-image-fit = none
+background-image-position = bottom-right
+background-image-opacity = 1
+# window-height = 50 
+# window-width = 120
+quick-terminal-size = 75%,75%
+
+# Subtle glass effect that also works with tmux/nvim paints
+background-opacity = 1
+background-opacity-cells = true
+background-blur = 10
+
+# Cursor & selection
+cursor-style = bar
+cursor-style-blink = false
+copy-on-select = clipboard
+selection-clear-on-copy = true
+mouse-hide-while-typing = true
+
+# macOS niceties
+macos-option-as-alt = true
+macos-titlebar-style = tabs
+window-save-state = always
+window-colorspace = display-p3
+window-vsync = true
+
+# Behavior
+scrollback-limit = 200000
+window-inherit-working-directory = true
+window-inherit-font-size = false
+quit-after-last-window-closed = false
+confirm-close-surface = true
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+clipboard-paste-protection = false	
+right-click-action = copy-or-paste
+
+# Shell integration (prompt-aware cursor, etc.)
+shell-integration = zsh
+# If you dislike the prompt cursor style override, you can do:
+# shell-integration-features = no-cursor
+
+# Useful keybind examples (adjust to taste)
+# List all available actions: `ghostty +list-keybinds --default`
+# ✅ Correct Ghostty keybinds
+keybind = cmd+t=new_tab
+keybind = cmd+w=close_surface
+keybind = cmd+right=new_split:right
+keybind = cmd+down=new_split:down
+keybind = cmd+enter=toggle_fullscreen
+keybind = cmd+r=reload_config
+keybind = global:cmd+shift+t=toggle_quick_terminal
+keybind = cmd+shift+left=goto_split:left
+keybind = cmd+shift+right=goto_split:right
+keybind = cmd+shift+up=goto_split:up
+keybind = cmd+shift+down=goto_split:down
+keybind = cmd+shift+equal=equalize_splits
+keybind = cmd+shift+z=toggle_split_zoom
