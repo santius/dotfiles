@@ -59,6 +59,7 @@ endif
 " Tree and icons
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'nvim-tree/nvim-web-devicons'
+Plug 'echasnovski/mini.icons'
 
 " Syntax / parser
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -91,9 +92,9 @@ if &modifiable
   set fileencoding=utf-8
 endif
 
-" Line numbers: absolute in insert mode, relative in normal mode.
+" Line numbers: absolute by default.
 set number
-set relativenumber
+set norelativenumber
 
 set ruler
 set wildmenu
@@ -140,7 +141,8 @@ call mkdir(expand(&undodir), 'p')
 
 " System integration
 set clipboard=unnamedplus
-set mouse=a
+" Let the terminal handle mouse selection and right-click copy/paste.
+set mouse=
 set backspace=indent,eol,start
 set noerrorbells
 set visualbell
@@ -317,6 +319,24 @@ function! s:CleanExtraSpaces() abort
   call setreg('/', l:old_query)
 endfunction
 
+function! s:QuitIfNoListedDocuments(...) abort
+  let l:closing_bufnr = a:0 ? a:1 : -1
+  for l:buf in getbufinfo({'buflisted': 1})
+    if l:buf.bufnr != l:closing_bufnr && getbufvar(l:buf.bufnr, '&buftype') ==# ''
+          \ && !empty(l:buf.name)
+      return
+    endif
+  endfor
+  unlet! g:last_document_delete_seen
+  qall
+endfunction
+
+function! s:StartTerminalInsert() abort
+  if &buftype ==# 'terminal'
+    startinsert
+  endif
+endfunction
+
 augroup CoreAutocmds
   autocmd!
 
@@ -328,9 +348,6 @@ augroup CoreAutocmds
   " Re-apply custom highlights after every colorscheme switch.
   autocmd ColorScheme * call s:ApplyUIHighlights()
 
-  " Relative number only outside insert mode.
-  autocmd InsertEnter * set norelativenumber
-  autocmd InsertLeave * set relativenumber
 augroup END
 
 augroup FileTypeSpecific
@@ -341,14 +358,16 @@ augroup FileTypeSpecific
   autocmd FileType gitcommit setlocal spell textwidth=72
 augroup END
 
-augroup StartifyBehavior
+augroup LastDocumentBehavior
   autocmd!
-  autocmd BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) && winnr('$') == 1 | Startify | endif
+  autocmd BufDelete * if exists('g:vim_startup_complete') | let g:last_document_delete_seen = 1 | call s:QuitIfNoListedDocuments(expand('<abuf>')) | endif
+  autocmd BufEnter * if exists('g:vim_startup_complete') && exists('g:last_document_delete_seen') | call s:QuitIfNoListedDocuments() | endif
 augroup END
 augroup TerminalDefaults
   autocmd!
-  autocmd TermOpen * startinsert
-  autocmd BufEnter,WinEnter term://* startinsert
+  autocmd TermOpen * call s:StartTerminalInsert()
+  autocmd BufEnter,WinEnter term://* call s:StartTerminalInsert()
+  autocmd ModeChanged *:[vV]* call s:StartTerminalInsert()
 augroup END
 
 
@@ -394,7 +413,7 @@ if ok_wk then
     plugins = {
       spelling = { enabled = true },
     },
-    window = {
+    win = {
       border = 'single',
     },
   })
@@ -596,24 +615,23 @@ function! s:HandleVimStartup() abort
     if exists(':Startify') == 2
       silent! Startify
     endif
-    if exists(':NvimTreeOpen') == 2
-      silent! NvimTreeOpen
-      wincmd w
-    endif
   elseif argc() == 1 && isdirectory(argv()[0])
     if exists(':NvimTreeOpen') == 2
       execute 'silent! NvimTreeOpen ' . fnameescape(argv()[0])
       wincmd w
     endif
-  else
-    if exists(':NvimTreeOpen') == 2
-      silent! NvimTreeOpen
-      wincmd w
-    endif
+  endif
+endfunction
+
+function! s:StartInsertDefault() abort
+  if &buftype ==# '' && &modifiable
+    startinsert
   endif
 endfunction
 
 augroup VimStartup
   autocmd!
   autocmd VimEnter * call s:HandleVimStartup()
+  autocmd VimEnter * call s:StartInsertDefault()
+  autocmd VimEnter * let g:vim_startup_complete = 1
 augroup END

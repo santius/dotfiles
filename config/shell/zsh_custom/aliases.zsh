@@ -40,18 +40,18 @@ alias path='echo -e ${PATH//:/\\n}'
 helpbat() {
     local help_flag="--help"
     local pager=(cat)
-    
+
     if [[ $1 == "-h" || $1 == "--help" ]]; then
         help_flag="$1"
         shift
     fi
-    
+
     if command -v bat >/dev/null 2>&1; then
         pager=(bat --language=help --style=plain)
         elif command -v batcat >/dev/null 2>&1; then
         pager=(batcat --language=help --style=plain)
     fi
-    
+
     "$@" "$help_flag" 2>&1 | "${pager[@]}"
 }
 
@@ -104,3 +104,10 @@ alias dimg='docker images'
 alias py='python3'
 alias pip='pip3'
 alias npml='npm list -g --depth=0'
+
+#Configs
+#
+alias conf-bluetooth='blueman-manger'
+alias conf-network='nm-connection-editor'
+alias conf-audio='pavucontrol'
+
