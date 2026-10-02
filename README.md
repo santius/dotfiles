@@ -59,6 +59,7 @@ Personal macOS/Linux Mint bootstrap and dotfile collection for terminal-first de
 
 ## Customisation
 
+- **Powerlevel10k** – `config/home/.p10k.zsh` stores the prompt configuration and is linked to `~/.p10k.zsh` by the installer. Run `p10k configure` to update it, then commit the changed file.
 - **Secrets** – drop environment secrets in `~/.secrets`; `config/shell/zsh_custom/exports.zsh` sources it first.
 - **Work profiles** – add per-directory git config via `~/.gitconfig-work` (see `[includeIf]` in the gitconfig).
 - **Extra Zsh modules** – add `.zsh` files under `config/shell/zsh_custom/`; they autoload after Oh My Zsh.

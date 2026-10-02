@@ -54,6 +54,7 @@ done
 # shellcheck disable=SC2034 # consumed by config_dotfiles.sh after sourcing
 FILES_TO_BACKUP=(
     "$HOME/.zshrc"
+    "$HOME/.p10k.zsh"
     "$HOME/.zprofile"
     "$HOME/.vimrc"
     "$HOME/.gitconfig"
