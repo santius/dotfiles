@@ -151,7 +151,12 @@ else
 fi
 
 # Load Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
+elif [[ -r "$ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  # Powerlevel10k also works when Oh My Zsh is not installed.
+  source "$ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme"
+fi
 
 # Source all custom configurations
 for config_file ($ZSH_CUSTOM/*.zsh(N)); do
