@@ -24,6 +24,13 @@ fi
 # Exit early for non-interactive shells to skip heavy setup
 [[ $- != *i* ]] && return
 
+# Remote hosts may not have Ghostty's terminfo installed.
+if [[ "$TERM" == xterm-ghostty ]] && (( $+commands[infocmp] )) &&
+   ! command infocmp "$TERM" >/dev/null 2>&1 &&
+   command infocmp xterm-256color >/dev/null 2>&1; then
+  export TERM=xterm-256color
+fi
+
 # Theme setting
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
@@ -256,7 +263,11 @@ fi
 
 
 FZF_GIT_SH="${DEV:-$HOME/dev}/fzf-git.sh/fzf-git.sh"
-[[ -f "$FZF_GIT_SH" ]] && source "$FZF_GIT_SH"
+# Debian/Ubuntu package bat as batcat.
+if ! (( $+commands[bat] )) && (( $+commands[batcat] )); then
+  bat() { command batcat "$@"; }
+fi
+[[ -f "$FZF_GIT_SH" ]] && (( $+commands[bat] || $+functions[bat] )) && source "$FZF_GIT_SH"
 unset FZF_GIT_SH
 
 if [[ "$HOST" == US* ]]; then
@@ -271,4 +282,13 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
 
-. "$HOME/.local/share/../bin/env"
+[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
+
+# Use conventional line editing even when EDITOR=nvim selects vi mode by default.
+bindkey -e
+for __dotfiles_keymap in emacs viins; do
+  bindkey -M "$__dotfiles_keymap" '^?' backward-delete-char
+  bindkey -M "$__dotfiles_keymap" '^H' backward-delete-char
+  bindkey -M "$__dotfiles_keymap" '^[[3~' delete-char
+done
+unset __dotfiles_keymap
