@@ -5,7 +5,7 @@ Personal macOS/Linux Mint bootstrap and dotfile collection for terminal-first de
 ## Highlights
 
 - ⚡️ **Fast Zsh environment** – tuned `.zshrc` with lazy SDKMAN, caching, delta-powered diffs, and rich aliases/functions under `config/shell/zsh_custom/`.
-- 🔧 **One-touch bootstrap** – `install.sh` backs up existing config, symlinks dotfiles, installs Homebrew packages, and optionally syncs fonts.
+- 🔧 **One-touch bootstrap** – `install.sh` backs up existing config, symlinks dotfiles, installs Oh My Zsh if missing, installs Homebrew packages, and optionally syncs fonts.
 - 🍎 **OS defaults** – `install.sh` can auto-detect macOS or Linux Mint and apply curated desktop defaults; root wrappers call scripts under `scripts/defaults/`.
 - 🍺 **Curated toolchain** – `config/brew/Brewfile` covers CLI essentials (git, delta, direnv), language runtimes (node, python, go, rust), GUI apps, fonts, and MAS apps.
 - 🧩 **Extensible structure** – scripts for aliases, exports, functions, cron jobs, and custom binaries live under a clear directory layout you can extend.

@@ -294,6 +294,7 @@ config_dotfiles() {
         dotfiles_create_symlink "$BREW_DIR/Brewfile" "$HOME/Brewfile"
     fi
 
+    config_oh_my_zsh || return 1
     execute_scripts
     config_nvim
 
@@ -360,6 +361,47 @@ config_nvim() {
     else
         unset GIT_DIR
     fi
+}
+
+config_oh_my_zsh() {
+    log_section "OH MY ZSH"
+
+    export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+    export ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH_CUSTOM_DIR}"
+    if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
+        log_info "Oh My Zsh already installed"
+        return 0
+    fi
+
+    # Clone separately because an existing installation path may contain custom themes.
+    # Do not run the upstream installer: it can replace .zshrc and change the login shell.
+    local staging_dir entry name
+    staging_dir="$(mktemp -d)" || return 1
+    if ! git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$staging_dir/oh-my-zsh"; then
+        rm -rf "$staging_dir"
+        log_error "Unable to download Oh My Zsh"
+        return 1
+    fi
+
+    if ! mkdir -p "$ZSH"; then
+        rm -rf "$staging_dir"
+        return 1
+    fi
+    for entry in "$staging_dir/oh-my-zsh"/* "$staging_dir/oh-my-zsh"/.*; do
+        [[ -e "$entry" || -L "$entry" ]] || continue
+        name="$(basename "$entry")"
+        case "$name" in
+            .|..) continue ;;
+            custom) [[ ! -e "$ZSH/custom" && ! -L "$ZSH/custom" ]] || continue ;;
+        esac
+        if ! cp -R "$entry" "$ZSH/"; then
+            rm -rf "$staging_dir"
+            log_error "Unable to install Oh My Zsh"
+            return 1
+        fi
+    done
+    rm -rf "$staging_dir"
+    log_success "Oh My Zsh installed"
 }
 
 config_themes() {
