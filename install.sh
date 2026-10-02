@@ -59,7 +59,6 @@ FILES_TO_BACKUP=(
     "$HOME/.vimrc"
     "$HOME/.gitconfig"
     "$HOME/Brewfile"
-    "$HOME/.ssh/config"
     "$HOME/.config/git/message"
     "$HOME/.config/bat/config"
 )

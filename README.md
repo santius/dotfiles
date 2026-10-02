@@ -65,6 +65,24 @@ Personal macOS/Linux Mint bootstrap and dotfile collection for terminal-first de
 - **Extra Zsh modules** – add `.zsh` files under `config/shell/zsh_custom/`; they autoload after Oh My Zsh.
 - **Install scripts** – any executable in `scripts/` runs automatically during `install.sh`.
 
+### SSH configuration
+
+The installer preserves existing SSH configs and `.ssh` directory symlinks on
+other machines. It only installs the shared config when no config exists, or
+refreshes a config symlink already pointing to this checkout. Private keys and
+known-hosts files remain local.
+
+If `~/.ssh/config` links to this checkout, edits to `config/home/.ssh/config`
+take effect immediately. Review host changes before pulling them on another
+machine. To use a machine-specific config instead, replace that symlink with a
+local copy; the installer will preserve it.
+
+- `digitalocean`: `root@143.244.162.15`
+- `digitalocean-legacy`: `deploy@143.110.146.178`
+
+Check resolved settings without connecting using `ssh -G <alias>`. This checks
+configuration, not server availability or whether a key is accepted.
+
 ### Adding `.config` files
 
 For a new app config that should live at `~/.config/pepito/config`, add the source file under:

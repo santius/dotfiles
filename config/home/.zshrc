@@ -292,3 +292,10 @@ for __dotfiles_keymap in emacs viins; do
   bindkey -M "$__dotfiles_keymap" '^[[3~' delete-char
 done
 unset __dotfiles_keymap
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"
+
+# >>> Codex installer >>>
+export PATH="$HOME/.local/bin:$PATH"
+# <<< Codex installer <<<

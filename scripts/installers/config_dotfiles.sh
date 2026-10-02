@@ -470,7 +470,16 @@ setup_ssh() {
     log_section "SSH"
 
     if [[ -L "$HOME/.ssh" ]]; then
-        dotfiles_backup_item "$HOME/.ssh" "$backup_dir"
+        log_warn "Keeping existing SSH directory symlink: $HOME/.ssh"
+        return 0
+    fi
+
+    # Preserve machine-specific hosts and keys; only refresh our own config link.
+    if [[ -e "$HOME/.ssh/config" || -L "$HOME/.ssh/config" ]]; then
+        if [[ ! -L "$HOME/.ssh/config" ]] || [[ "$(readlink "$HOME/.ssh/config")" != "$DOTS_DIR/.ssh/config" ]]; then
+            log_warn "Keeping existing SSH config: $HOME/.ssh/config"
+            return 0
+        fi
     fi
 
     mkdir -p "$HOME/.ssh"
