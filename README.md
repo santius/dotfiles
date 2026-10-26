@@ -68,8 +68,9 @@ Personal macOS/Linux Mint bootstrap and dotfile collection for terminal-first de
 ### SSH configuration
 
 The installer preserves existing SSH configs and `.ssh` directory symlinks on
-other machines. It only installs the shared config when no config exists, or
-refreshes a config symlink already pointing to this checkout. Private keys and
+other machines. It installs the shared config when no config exists, or
+refreshes an existing config symlink to point to the current checkout (including
+after moving the repository). Private keys and
 known-hosts files remain local.
 
 If `~/.ssh/config` links to this checkout, edits to `config/home/.ssh/config`

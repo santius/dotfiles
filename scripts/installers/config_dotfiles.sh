@@ -474,12 +474,15 @@ setup_ssh() {
         return 0
     fi
 
-    # Preserve machine-specific hosts and keys; only refresh our own config link.
-    if [[ -e "$HOME/.ssh/config" || -L "$HOME/.ssh/config" ]]; then
-        if [[ ! -L "$HOME/.ssh/config" ]] || [[ "$(readlink "$HOME/.ssh/config")" != "$DOTS_DIR/.ssh/config" ]]; then
-            log_warn "Keeping existing SSH config: $HOME/.ssh/config"
-            return 0
-        fi
+    # Preserve local configs, but refresh links after moving the checkout.
+    if [[ -e "$HOME/.ssh/config" && ! -L "$HOME/.ssh/config" ]]; then
+        log_warn "Keeping existing SSH config: $HOME/.ssh/config"
+        return 0
+    fi
+
+    if [[ ! -f "$DOTS_DIR/.ssh/config" ]]; then
+        log_warn "SSH config not found at $DOTS_DIR/.ssh/config"
+        return 0
     fi
 
     mkdir -p "$HOME/.ssh"
